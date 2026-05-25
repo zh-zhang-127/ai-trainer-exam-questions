@@ -16,8 +16,46 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 #hpct{font-size:11px;opacity:.85}
 .hbar{width:120px;height:4px;background:rgba(255,255,255,.3);border-radius:2px;overflow:hidden;margin-top:3px}
 .hbar-f{height:100%;background:#fff;border-radius:2px;transition:width .5s}
+.hpreview{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff;padding:5px 14px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:600;white-space:nowrap;transition:background .15s}
+.hpreview:hover{background:rgba(255,255,255,.32)}
 .hreset{margin-left:auto;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:4px 12px;border-radius:6px;cursor:pointer;font-size:12px}
 .hreset:hover{background:rgba(255,255,255,.25)}
+
+/* ── quick preview overlay ── */
+#pvOverlay{position:fixed;inset:0;background:rgba(15,15,30,.55);z-index:1000;display:none;align-items:stretch;justify-content:flex-end}
+#pvOverlay.open{display:flex}
+#pvPanel{width:min(820px,100vw);background:#f8f9ff;display:flex;flex-direction:column;box-shadow:-6px 0 32px rgba(0,0,0,.18);animation:slideIn .22s ease}
+@keyframes slideIn{from{transform:translateX(60px);opacity:0}to{transform:translateX(0);opacity:1}}
+#pvHead{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+#pvHead .pvtitle{font-size:15px;font-weight:700;flex:1}
+#pvSearch{flex:1;max-width:220px;padding:6px 12px;border-radius:8px;border:none;font-size:13px;outline:none}
+#pvTypeFilter{padding:5px 10px;border-radius:8px;border:none;font-size:12px;background:rgba(255,255,255,.9);cursor:pointer}
+#pvSrcFilter{padding:5px 10px;border-radius:8px;border:none;font-size:12px;background:rgba(255,255,255,.9);cursor:pointer}
+.pvclose{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);color:#fff;width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+.pvclose:hover{background:rgba(255,255,255,.3)}
+#pvStats{padding:8px 16px;background:#fff;border-bottom:1px solid #e5e7eb;font-size:12px;color:#6b7280;display:flex;gap:16px;flex-shrink:0}
+#pvStats b{color:#4f46e5}
+#pvList{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:10px}
+
+/* ── preview card ── */
+.pvc{background:#fff;border-radius:10px;border:1.5px solid #e5e7eb;overflow:hidden;transition:border-color .15s}
+.pvc:hover{border-color:#a78bfa}
+.pvc-head{padding:10px 14px;cursor:pointer;display:flex;align-items:flex-start;gap:10px;user-select:none}
+.pvc-seq{font-size:11px;color:#9ca3af;min-width:28px;padding-top:2px}
+.pvc-q{flex:1;font-size:14px;line-height:1.55;color:#1a1a2e}
+.pvc-ans{font-size:12px;font-weight:700;padding:2px 9px;border-radius:10px;background:#d1fae5;color:#065f46;white-space:nowrap;margin-top:2px;align-self:flex-start}
+.pvc-toggle{font-size:11px;color:#9ca3af;padding-top:3px;transition:transform .2s}
+.pvc-toggle.open{transform:rotate(180deg)}
+.pvc-body{display:none;padding:0 14px 12px;border-top:1px solid #f3f4f6}
+.pvc-body.open{display:block}
+.pvc-opts{display:flex;flex-direction:column;gap:5px;margin:10px 0 8px}
+.pvc-opt{display:flex;gap:8px;padding:7px 10px;border-radius:7px;border:1.5px solid #e5e7eb;font-size:13px;line-height:1.45}
+.pvc-opt.right{border-color:#22c55e;background:#f0fdf4;font-weight:600}
+.pvc-opt-k{font-weight:700;min-width:18px;color:#374151}
+.pvc-note{font-size:12px;color:#6b7280;background:#f8f9ff;padding:8px 10px;border-radius:7px;border-left:3px solid #7c3aed;line-height:1.6;white-space:pre-wrap}
+.pvc-notitle{font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:4px}
+.pvc-tags{display:flex;gap:5px;margin-bottom:6px}
+#pvEmpty{text-align:center;color:#9ca3af;padding:48px;font-size:15px}
 
 /* ── layout ── */
 #wrap{display:flex;flex:1;overflow:hidden}
@@ -86,7 +124,33 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
     <div id="hpct">正确率 <b id="hacc">-</b></div>
     <div class="hbar"><div class="hbar-f" id="hbarf"></div></div>
   </div>
+  <button class="hpreview" onclick="openPreview()">📖 快速预览</button>
   <button class="hreset" onclick="resetAll()">重置进度</button>
+</div>
+
+<!-- ── Quick Preview Overlay ── -->
+<div id="pvOverlay" onclick="pvBgClick(event)">
+  <div id="pvPanel">
+    <div id="pvHead">
+      <div class="pvtitle">📖 快速预览</div>
+      <input id="pvSearch" type="text" placeholder="🔍 搜索题目或知识点…" oninput="filterPreview()">
+      <select id="pvTypeFilter" onchange="filterPreview()">
+        <option value="">全部题型</option>
+        <option value="单选">单选题</option>
+        <option value="多选">多选题</option>
+        <option value="判断">判断题</option>
+      </select>
+      <select id="pvSrcFilter" onchange="filterPreview()">
+        <option value="">全部来源</option>
+      </select>
+      <select id="pvCatFilter" onchange="filterPreview()">
+        <option value="">全部分类</option>
+      </select>
+      <button class="pvclose" onclick="closePreview()">✕</button>
+    </div>
+    <div id="pvStats"></div>
+    <div id="pvList"><div id="pvEmpty" style="display:none">未找到匹配题目</div></div>
+  </div>
 </div>
 
 <div id="wrap">
@@ -384,6 +448,125 @@ function resetAll() {
   buildCatList();
   buildQueue();
   updateHeader();
+}
+
+// ─── quick preview ────────────────────────────────────────────────
+let pvPool = [];
+
+function openPreview() {
+  // populate source/cat selects
+  const srcSel = document.getElementById('pvSrcFilter');
+  srcSel.innerHTML = '<option value="">全部来源</option>' +
+    ALLSRCS.map(s => `<option value="${s}">${s}</option>`).join('');
+  const catSel = document.getElementById('pvCatFilter');
+  catSel.innerHTML = '<option value="">全部分类</option>' +
+    ALLCATS.map(c => `<option value="${c}">${c}</option>`).join('');
+  if (curCat) catSel.value = curCat;
+  if (curSrc !== '全部') srcSel.value = curSrc;
+  document.getElementById('pvSearch').value = '';
+  document.getElementById('pvTypeFilter').value = '';
+  filterPreview();
+  document.getElementById('pvOverlay').classList.add('open');
+}
+
+function closePreview() {
+  document.getElementById('pvOverlay').classList.remove('open');
+}
+
+function pvBgClick(e) {
+  if (e.target === document.getElementById('pvOverlay')) closePreview();
+}
+
+function filterPreview() {
+  const kw    = document.getElementById('pvSearch').value.trim().toLowerCase();
+  const type  = document.getElementById('pvTypeFilter').value;
+  const src   = document.getElementById('pvSrcFilter').value;
+  const cat   = document.getElementById('pvCatFilter').value;
+
+  pvPool = ALLQ.filter(q => {
+    if (type && q.type !== type) return false;
+    if (src  && q.src  !== src)  return false;
+    if (cat  && q.cat  !== cat)  return false;
+    if (kw) {
+      const hay = (q.text + ' ' + Object.values(q.opts).join(' ') + ' ' + q.note).toLowerCase();
+      if (!hay.includes(kw)) return false;
+    }
+    return true;
+  });
+
+  renderPreview();
+}
+
+function renderPreview() {
+  const list  = document.getElementById('pvList');
+  const empty = document.getElementById('pvEmpty');
+  const stats = document.getElementById('pvStats');
+
+  const total = pvPool.length;
+  const withNote = pvPool.filter(q => q.note).length;
+  stats.innerHTML = `共 <b>${total}</b> 题 &nbsp;|&nbsp; 有解析 <b>${withNote}</b> 题 &nbsp;|&nbsp; 点击题目可展开选项与解析`;
+
+  if (!total) {
+    empty.style.display = 'block';
+    // Remove old cards
+    [...list.children].forEach(c => { if (c.id !== 'pvEmpty') c.remove(); });
+    return;
+  }
+  empty.style.display = 'none';
+
+  const frag = document.createDocumentFragment();
+  pvPool.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'pvc';
+    div.id = 'pvc_' + q.id;
+
+    const correct = Array.isArray(q.ans) ? q.ans : (q.ans ? [q.ans] : []);
+    const ansStr  = correct.join('、') || '—';
+    const typeCls = {'单选':'tag-单选','多选':'tag-多选','判断':'tag-判断'}[q.type] || 'tag-单选';
+    const srcCls  = q.src === '泰迪云课堂' ? 'tag-src-td' : 'tag-src-ai';
+
+    // Options HTML
+    const optsHtml = Object.entries(q.opts).map(([k, v]) => {
+      const isRight = correct.includes(k);
+      return `<div class="pvc-opt${isRight?' right':''}"><span class="pvc-opt-k">${k}.</span><span>${v}</span></div>`;
+    }).join('');
+
+    const noteHtml = q.note
+      ? `<div class="pvc-note"><div class="pvc-notitle">💡 解析</div>${q.note}</div>`
+      : '';
+
+    div.innerHTML = `
+      <div class="pvc-head" onclick="pvToggle('${q.id}')">
+        <span class="pvc-seq">${idx+1}</span>
+        <div style="flex:1">
+          <div class="pvc-tags">
+            <span class="qtag ${typeCls}">${q.type}</span>
+            <span class="qtag ${srcCls}">${q.src}</span>
+            <span style="font-size:11px;color:#9ca3af;padding-top:2px">${q.cat}</span>
+          </div>
+          <div class="pvc-q">${q.text}</div>
+        </div>
+        <span class="pvc-ans">答：${ansStr}</span>
+        <span class="pvc-toggle" id="pvt_${q.id}">▼</span>
+      </div>
+      <div class="pvc-body" id="pvb_${q.id}">
+        <div class="pvc-opts">${optsHtml}</div>
+        ${noteHtml}
+      </div>`;
+    frag.appendChild(div);
+  });
+
+  // Replace old cards (keep pvEmpty)
+  [...list.children].forEach(c => { if (c.id !== 'pvEmpty') c.remove(); });
+  list.insertBefore(frag, empty);
+}
+
+function pvToggle(id) {
+  const body    = document.getElementById('pvb_' + id);
+  const toggle  = document.getElementById('pvt_' + id);
+  const isOpen  = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  toggle.classList.toggle('open', !isOpen);
 }
 
 // ─── init ────────────────────────────────────────────────────────
