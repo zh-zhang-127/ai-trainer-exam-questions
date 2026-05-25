@@ -108,15 +108,18 @@ for c in CATS:
 
 # ── 3. Generate HTML ──────────────────────────────────────────────────────────
 SRCS = sorted(set(q["src"] for q in questions))
-q_json    = __import__('json').dumps(questions, ensure_ascii=False, separators=(",",":"))
-cats_json = __import__('json').dumps(CATS, ensure_ascii=False, separators=(",",":"))
-srcs_json = __import__('json').dumps(SRCS, ensure_ascii=False, separators=(",",":"))
+# All keywords flat list for JS highlighting
+KWDS = sorted(set(kw for _, kws in RULES for kw in kws), key=len, reverse=True)
+q_json    = json.dumps(questions, ensure_ascii=False, separators=(",",":"))
+cats_json = json.dumps(CATS, ensure_ascii=False, separators=(",",":"))
+srcs_json = json.dumps(SRCS, ensure_ascii=False, separators=(",",":"))
+kwds_json = json.dumps(KWDS, ensure_ascii=False, separators=(",",":"))
 
 out = r"d:\AI训练师\Ai训练师刷题.html"
 with open(r"d:\AI训练师\html_template.txt", encoding="utf-8") as f:
     HTML = f.read()
 
-HTML = HTML.replace('QDATA_PH', q_json).replace('CATS_PH', cats_json).replace('SRCS_PH', srcs_json)
+HTML = HTML.replace('QDATA_PH', q_json).replace('CATS_PH', cats_json).replace('SRCS_PH', srcs_json).replace('KWDS_PH', kwds_json)
 
 with open(out, "w", encoding="utf-8") as f:
     f.write(HTML)

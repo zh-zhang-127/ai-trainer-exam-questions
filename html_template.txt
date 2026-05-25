@@ -21,42 +21,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 .hreset{margin-left:auto;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:4px 12px;border-radius:6px;cursor:pointer;font-size:12px}
 .hreset:hover{background:rgba(255,255,255,.25)}
 
-/* ── quick preview overlay ── */
-#pvOverlay{position:fixed;inset:0;background:rgba(15,15,30,.55);z-index:1000;display:none;align-items:stretch;justify-content:flex-end}
-#pvOverlay.open{display:flex}
-#pvPanel{width:min(820px,100vw);background:#f8f9ff;display:flex;flex-direction:column;box-shadow:-6px 0 32px rgba(0,0,0,.18);animation:slideIn .22s ease}
-@keyframes slideIn{from{transform:translateX(60px);opacity:0}to{transform:translateX(0);opacity:1}}
-#pvHead{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:12px;flex-shrink:0}
-#pvHead .pvtitle{font-size:15px;font-weight:700;flex:1}
-#pvSearch{flex:1;max-width:220px;padding:6px 12px;border-radius:8px;border:none;font-size:13px;outline:none}
-#pvTypeFilter{padding:5px 10px;border-radius:8px;border:none;font-size:12px;background:rgba(255,255,255,.9);cursor:pointer}
-#pvSrcFilter{padding:5px 10px;border-radius:8px;border:none;font-size:12px;background:rgba(255,255,255,.9);cursor:pointer}
-.pvclose{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);color:#fff;width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
-.pvclose:hover{background:rgba(255,255,255,.3)}
-#pvStats{padding:8px 16px;background:#fff;border-bottom:1px solid #e5e7eb;font-size:12px;color:#6b7280;display:flex;gap:16px;flex-shrink:0}
-#pvStats b{color:#4f46e5}
-#pvList{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:10px}
-
-/* ── preview card ── */
-.pvc{background:#fff;border-radius:10px;border:1.5px solid #e5e7eb;overflow:hidden;transition:border-color .15s}
-.pvc:hover{border-color:#a78bfa}
-.pvc-head{padding:10px 14px;cursor:pointer;display:flex;align-items:flex-start;gap:10px;user-select:none}
-.pvc-seq{font-size:11px;color:#9ca3af;min-width:28px;padding-top:2px}
-.pvc-q{flex:1;font-size:14px;line-height:1.55;color:#1a1a2e}
-.pvc-ans{font-size:12px;font-weight:700;padding:2px 9px;border-radius:10px;background:#d1fae5;color:#065f46;white-space:nowrap;margin-top:2px;align-self:flex-start}
-.pvc-toggle{font-size:11px;color:#9ca3af;padding-top:3px;transition:transform .2s}
-.pvc-toggle.open{transform:rotate(180deg)}
-.pvc-body{display:none;padding:0 14px 12px;border-top:1px solid #f3f4f6}
-.pvc-body.open{display:block}
-.pvc-opts{display:flex;flex-direction:column;gap:5px;margin:10px 0 8px}
-.pvc-opt{display:flex;gap:8px;padding:7px 10px;border-radius:7px;border:1.5px solid #e5e7eb;font-size:13px;line-height:1.45}
-.pvc-opt.right{border-color:#22c55e;background:#f0fdf4;font-weight:600}
-.pvc-opt-k{font-weight:700;min-width:18px;color:#374151}
-.pvc-note{font-size:12px;color:#6b7280;background:#f8f9ff;padding:8px 10px;border-radius:7px;border-left:3px solid #7c3aed;line-height:1.6;white-space:pre-wrap}
-.pvc-notitle{font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:4px}
-.pvc-tags{display:flex;gap:5px;margin-bottom:6px}
-#pvEmpty{text-align:center;color:#9ca3af;padding:48px;font-size:15px}
-
 /* ── layout ── */
 #wrap{display:flex;flex:1;overflow:hidden}
 
@@ -88,9 +52,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 #card{flex:1;overflow-y:auto;background:#fff;border-radius:12px;padding:22px 26px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 #qnum{font-size:12px;color:#9ca3af;margin-bottom:6px;display:flex;align-items:center;gap:8px}
 .qtag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
-.tag-单选{background:#dbeafe;color:#1d4ed8}
-.tag-多选{background:#fef3c7;color:#92400e}
-.tag-判断{background:#d1fae5;color:#065f46}
+.tag-single{background:#dbeafe;color:#1d4ed8}
+.tag-multi{background:#fef3c7;color:#92400e}
+.tag-tf{background:#d1fae5;color:#065f46}
 .tag-src-ai{background:#ede9fe;color:#5b21b6}
 .tag-src-td{background:#fce7f3;color:#9d174d}
 #qtext{font-size:17px;line-height:1.7;margin-bottom:18px;white-space:pre-wrap}
@@ -114,6 +78,38 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 #next{margin-top:10px;padding:8px 22px;background:#4f46e5;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer}
 #next:hover{background:#4338ca}
 #empty{display:none;padding:40px;text-align:center;color:#9ca3af;font-size:15px}
+
+/* ── knowledge panel ── */
+#pvOverlay{position:fixed;inset:0;background:rgba(15,15,30,.55);z-index:1000;display:none}
+#pvOverlay.open{display:block}
+#pvPanel{position:absolute;top:0;right:0;width:min(860px,100vw);height:100vh;background:#f8f9ff;display:flex;flex-direction:column;box-shadow:-6px 0 32px rgba(0,0,0,.22)}
+@keyframes slideIn{from{transform:translateX(60px);opacity:0}to{transform:translateX(0);opacity:1}}
+#pvPanel{animation:slideIn .2s ease}
+#pvHead{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:11px 16px;display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap}
+.pvtitle{font-size:15px;font-weight:700;white-space:nowrap}
+#pvSearch{flex:1;min-width:100px;max-width:190px;padding:6px 11px;border-radius:8px;border:none;font-size:13px;outline:none}
+#pvTypeFilter,#pvSrcFilter,#pvCatFilter{padding:5px 8px;border-radius:8px;border:none;font-size:12px;background:rgba(255,255,255,.9);cursor:pointer;max-width:110px}
+.pvclose{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);color:#fff;width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pvclose:hover{background:rgba(255,255,255,.3)}
+#pvStats{padding:6px 14px;background:#fff;border-bottom:1px solid #e5e7eb;font-size:12px;color:#6b7280;flex-shrink:0}
+#pvStats b{color:#4f46e5}
+#pvList{flex:1;overflow-y:auto;padding:10px 14px;display:flex;flex-direction:column;gap:10px}
+
+/* ── knowledge point card ── */
+.kpc{background:#fff;border-radius:10px;border:1.5px solid #e5e7eb;padding:13px 16px}
+.kpc-meta{display:flex;gap:5px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.kpc-q{font-size:14px;line-height:1.65;color:#111827;margin-bottom:10px;font-weight:500}
+.kpc-opts{display:flex;flex-direction:column;gap:4px;margin-bottom:9px}
+.kpc-opt{display:flex;gap:8px;font-size:13px;padding:6px 10px;border-radius:6px;border:1.5px solid #e5e7eb;line-height:1.5;color:#374151}
+.kpc-opt.right{border-color:#22c55e;background:#f0fdf4;font-weight:700;color:#065f46}
+.kpc-opt-k{font-weight:700;min-width:18px;flex-shrink:0}
+.kpc-note{font-size:13px;color:#374151;background:#fffbeb;padding:9px 12px;border-radius:7px;border-left:3px solid #f59e0b;line-height:1.7}
+.kpc-note-lbl{font-size:11px;font-weight:700;color:#d97706;margin-bottom:3px}
+.kpc-ans-tf{display:inline-block;padding:4px 14px;border-radius:8px;font-size:14px;font-weight:700;background:#dcfce7;color:#166534;margin-bottom:8px}
+mark.kw{background:#fde68a;color:#78350f;border-radius:2px;padding:0 2px;font-style:normal}
+#pvEmpty{text-align:center;color:#9ca3af;padding:60px 20px;font-size:15px;display:none}
+#pvMore{width:100%;padding:10px;border:1.5px dashed #a78bfa;background:#faf5ff;color:#6d28d9;border-radius:8px;font-size:13px;cursor:pointer;font-weight:600;margin:4px 0}
+#pvMore:hover{background:#ede9fe}
 </style>
 </head>
 <body>
@@ -128,28 +124,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
   <button class="hreset" onclick="resetAll()">重置进度</button>
 </div>
 
-<!-- ── Quick Preview Overlay ── -->
+<!-- ── Knowledge Panel ── -->
 <div id="pvOverlay" onclick="pvBgClick(event)">
   <div id="pvPanel">
     <div id="pvHead">
-      <div class="pvtitle">💡 知识点速览</div>
-      <input id="pvSearch" type="text" placeholder="🔍 搜索题目或知识点…" oninput="filterPreview()">
-      <select id="pvTypeFilter" onchange="filterPreview()">
+      <span class="pvtitle">💡 知识点速览</span>
+      <input id="pvSearch" type="text" placeholder="🔍 搜索关键词…" oninput="pvFilter()">
+      <select id="pvTypeFilter" onchange="pvFilter()">
         <option value="">全部题型</option>
-        <option value="单选">单选题</option>
-        <option value="多选">多选题</option>
-        <option value="判断">判断题</option>
+        <option value="single">单选题</option>
+        <option value="multi">多选题</option>
+        <option value="tf">判断题</option>
       </select>
-      <select id="pvSrcFilter" onchange="filterPreview()">
+      <select id="pvSrcFilter" onchange="pvFilter()">
         <option value="">全部来源</option>
       </select>
-      <select id="pvCatFilter" onchange="filterPreview()">
+      <select id="pvCatFilter" onchange="pvFilter()">
         <option value="">全部分类</option>
       </select>
       <button class="pvclose" onclick="closePreview()">✕</button>
     </div>
-    <div id="pvStats"></div>
-    <div id="pvList"><div id="pvEmpty" style="display:none">未找到匹配题目</div></div>
+    <div id="pvStats">正在加载…</div>
+    <div id="pvList"><div id="pvEmpty">未找到匹配知识点</div></div>
   </div>
 </div>
 
@@ -176,7 +172,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
       <div id="qtext"></div>
       <div id="multi-hint" style="display:none">（多选题，请选择所有正确答案）</div>
       <div class="opts" id="opts"></div>
-      <button id="submit" onclick="submit()">提 交</button>
+      <button id="submit" onclick="doSubmit()">提 交</button>
       <div id="result">
         <div class="rh" id="rh"></div>
         <div class="note" id="rnote"></div>
@@ -187,44 +183,51 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 </div>
 
 <script>
-const ALLQ = QDATA_PH;
+const ALLQ    = QDATA_PH;
 const ALLCATS = CATS_PH;
 const ALLSRCS = SRCS_PH;
+const ALLKWDS = KWDS_PH;
 
+// ── type helpers ──────────────────────────────────────────────────
+const TYPE_LABEL = {single:'单选', multi:'多选', tf:'判断'};
+const TYPE_CLS   = {single:'tag-single', multi:'tag-multi', tf:'tag-tf'};
+
+function getCorrect(q) {
+  // ans is always a string: "A", "AB", "正确", "错误"
+  if (!q.ans) return [];
+  if (q.type === 'tf') return [q.ans];
+  return q.ans.split(''); // ["A"] or ["A","B"]
+}
+
+// ── localStorage ─────────────────────────────────────────────────
 const LS_KEY = 'aiquiz2';
 let prog = {};
 try { prog = JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch(e) {}
 
-let curCat = ALLCATS[0] || '';
-let curSrc = '全部';
-let curMode = 0; // 0=seq 1=rand 2=wrong
-let queue = [];
-let qi = 0;
+// ── state ─────────────────────────────────────────────────────────
+let curCat  = ALLCATS[0] || '';
+let curSrc  = '全部';
+let curMode = 0;
+let queue   = [];
+let qi      = 0;
 let selOpts = new Set();
 let submitted = false;
 
-// ─── source filter UI ───────────────────────────────────────────
+// ── source filter ─────────────────────────────────────────────────
 function buildSrcFilter() {
   const c = document.getElementById('srcFilter');
-  const sources = ['全部', ...ALLSRCS];
-  c.innerHTML = sources.map(s => {
-    const active = s === curSrc ? ' on' : '';
-    return `<button class="sfbtn${active}" onclick="setSrc('${s}')">${s}</button>`;
-  }).join('');
+  c.innerHTML = ['全部', ...ALLSRCS].map(s =>
+    `<button class="sfbtn${s===curSrc?' on':''}" onclick="setSrc('${s.replace(/'/g,"\\'")}'">${s}</button>`
+  ).join('');
 }
+function setSrc(s) { curSrc = s; buildSrcFilter(); buildCatList(); buildQueue(); }
 
-function setSrc(s) {
-  curSrc = s;
-  buildSrcFilter();
-  buildCatList();
-  buildQueue();
-}
-
-// ─── category list ───────────────────────────────────────────────
+// ── filtered pool ─────────────────────────────────────────────────
 function filteredQuestions() {
   return ALLQ.filter(q => curSrc === '全部' || q.src === curSrc);
 }
 
+// ── category list ─────────────────────────────────────────────────
 function buildCatList() {
   const fq = filteredQuestions();
   const cc = {};
@@ -232,207 +235,145 @@ function buildCatList() {
   const cats = ALLCATS.filter(c => cc[c] > 0);
   if (cc['综合与其他']) cats.push('综合与其他');
   if (!cats.includes(curCat)) curCat = cats[0] || '';
-
   const el = document.getElementById('catlist');
   el.innerHTML = cats.map(c => {
     const total = cc[c]||0;
     const done  = fq.filter(q => q.cat===c && prog[q.id]!=null).length;
     const pct   = total ? Math.round(done/total*100) : 0;
-    const on = c===curCat?' on':'';
-    return `<div class="ci${on}" onclick="pickCat('${c}')">
-      ${c}
-      <span class="ci-cnt">${done}/${total}</span>
+    return `<div class="ci${c===curCat?' on':''}" onclick="pickCat('${c.replace(/'/g,"\\'")}')">
+      ${c}<span class="ci-cnt">${done}/${total}</span>
       <div style="height:3px;background:#e5e7eb;border-radius:2px;margin-top:4px">
         <div style="height:100%;width:${pct}%;background:#7c3aed;border-radius:2px"></div>
-      </div>
-    </div>`;
+      </div></div>`;
   }).join('');
 }
+function pickCat(c) { curCat = c; buildCatList(); buildQueue(); }
 
-function pickCat(c) {
-  curCat = c;
-  buildCatList();
-  buildQueue();
-}
-
-// ─── queue ───────────────────────────────────────────────────────
+// ── queue ─────────────────────────────────────────────────────────
 function buildQueue() {
   const pool = filteredQuestions().filter(q => q.cat === curCat);
-  if (curMode === 0) {
-    queue = [...pool];
-  } else if (curMode === 1) {
-    queue = [...pool].sort(() => Math.random()-.5);
-  } else {
-    queue = pool.filter(q => prog[q.id] && !prog[q.id].ok);
-    if (!queue.length) queue = [...pool].filter(q => prog[q.id] && !prog[q.id].ok);
-  }
+  if (curMode === 0)      queue = [...pool];
+  else if (curMode === 1) queue = [...pool].sort(() => Math.random()-.5);
+  else                    queue = pool.filter(q => prog[q.id] && !prog[q.id].ok);
   qi = 0;
   buildDots();
   showQ();
 }
-
-// ─── mode buttons ────────────────────────────────────────────────
 function setMode(m) {
   curMode = m;
   [0,1,2].forEach(i => document.getElementById('m'+i).classList.toggle('on', i===m));
   buildQueue();
 }
 
-// ─── dots ────────────────────────────────────────────────────────
+// ── dots ─────────────────────────────────────────────────────────
 function buildDots() {
-  const box = document.getElementById('dotbox');
-  box.innerHTML = queue.map((q, i) => {
+  document.getElementById('dotbox').innerHTML = queue.map((q,i) => {
     const p = prog[q.id];
-    const cls = p ? (p.ok ? 'ans-ok' : 'ans-ng') : '';
-    return `<div class="dot ${cls}" id="d${i}" title="第${i+1}题" onclick="jumpTo(${i})"></div>`;
+    return `<div class="dot${p?(p.ok?' ans-ok':' ans-ng'):''}" id="d${i}" title="第${i+1}题" onclick="jumpTo(${i})"></div>`;
   }).join('');
   highlightDot();
 }
-
 function highlightDot() {
   document.querySelectorAll('.dot').forEach(d => d.classList.remove('cur'));
   const d = document.getElementById('d'+qi);
   if (d) { d.classList.add('cur'); d.scrollIntoView({block:'nearest'}); }
 }
+function jumpTo(i) { qi=i; selOpts.clear(); submitted=false; highlightDot(); showQ(); }
 
-function jumpTo(i) {
-  qi = i;
-  selOpts.clear();
-  submitted = false;
-  highlightDot();
-  showQ();
-}
-
-// ─── question display ────────────────────────────────────────────
-function srcTag(src) {
-  if (src === '泰迪云课堂') return '<span class="qtag tag-src-td">泰迪云课堂</span>';
-  return '<span class="qtag tag-src-ai">AI训练师题库</span>';
-}
-
+// ── quiz display ──────────────────────────────────────────────────
 function showQ() {
   const empty = document.getElementById('empty');
-  const qnum  = document.getElementById('qnum');
-  const qtext = document.getElementById('qtext');
-  const optsEl= document.getElementById('opts');
-  const hint  = document.getElementById('multi-hint');
   const sub   = document.getElementById('submit');
   const res   = document.getElementById('result');
-
   if (!queue.length) {
-    empty.style.display = 'block';
-    qnum.innerHTML = '';
-    qtext.textContent = '';
-    optsEl.innerHTML = '';
-    hint.style.display = 'none';
-    sub.style.display = 'none';
-    res.style.display = 'none';
+    empty.style.display='block'; sub.style.display='none'; res.style.display='none';
+    document.getElementById('qnum').innerHTML='';
+    document.getElementById('qtext').textContent='';
+    document.getElementById('opts').innerHTML='';
+    document.getElementById('multi-hint').style.display='none';
     return;
   }
-  empty.style.display = 'none';
-  sub.style.display = 'inline-block';
-
+  empty.style.display='none'; sub.style.display='inline-block';
   const q = queue[qi];
-  const typeCls = {'单选':'tag-单选','多选':'tag-多选','判断':'tag-判断'}[q.type]||'tag-单选';
-  qnum.innerHTML = `<span>第 ${qi+1} / ${queue.length} 题</span>
-    <span class="qtag ${typeCls}">${q.type}</span>
-    ${srcTag(q.src)}
-    <span style="color:#9ca3af;font-size:11px">${q.cat}</span>`;
-  qtext.textContent = q.text;
-  hint.style.display = q.type==='多选' ? 'block' : 'none';
-
-  const keys = Object.keys(q.opts);
   const p = prog[q.id];
   submitted = !!p;
   selOpts = new Set(p ? p.ans : []);
+  const correct = getCorrect(q);
 
-  optsEl.innerHTML = keys.map(k => {
+  document.getElementById('qnum').innerHTML =
+    `<span>第 ${qi+1} / ${queue.length} 题</span>
+     <span class="qtag ${TYPE_CLS[q.type]||'tag-single'}">${TYPE_LABEL[q.type]||q.type}</span>
+     <span class="qtag ${q.src==='泰迪云课堂'?'tag-src-td':'tag-src-ai'}">${q.src}</span>
+     <span style="color:#9ca3af;font-size:11px">${q.cat}</span>`;
+  document.getElementById('qtext').textContent = q.text;
+  document.getElementById('multi-hint').style.display = q.type==='multi'?'block':'none';
+
+  const keys = Object.keys(q.opts);
+  document.getElementById('opts').innerHTML = keys.map(k => {
     let cls = 'opt';
     if (submitted) {
-      const correct = Array.isArray(q.ans) ? q.ans : [q.ans];
-      if (correct.includes(k)) cls += ' correct';
-      else if (selOpts.has(k)) cls += ' wrong';
-    } else if (selOpts.has(k)) {
-      cls += ' sel';
-    }
+      if (correct.includes(k)) cls+=' correct';
+      else if (selOpts.has(k)) cls+=' wrong';
+    } else if (selOpts.has(k)) cls+=' sel';
     return `<div class="${cls}" id="o${k}" onclick="pick('${k}')">
       <span class="opt-key">${k}</span>
-      <span class="opt-txt">${q.opts[k]}</span>
-    </div>`;
+      <span class="opt-txt">${q.opts[k]}</span></div>`;
   }).join('');
 
-  sub.disabled = submitted || selOpts.size === 0;
-  if (submitted) showResult(q, p.ok);
-  else { res.style.display = 'none'; }
+  sub.disabled = submitted || selOpts.size===0;
+  if (submitted) showResult(q, p.ok); else res.style.display='none';
   updateHeader();
 }
 
 function pick(k) {
   if (submitted) return;
   const q = queue[qi];
-  if (q.type === '多选') {
-    selOpts.has(k) ? selOpts.delete(k) : selOpts.add(k);
-  } else {
-    selOpts.clear(); selOpts.add(k);
-  }
+  if (q.type === 'multi') { selOpts.has(k)?selOpts.delete(k):selOpts.add(k); }
+  else { selOpts.clear(); selOpts.add(k); }
   document.querySelectorAll('.opt').forEach(el => {
-    const key = el.id.replace('o','');
-    el.classList.toggle('sel', selOpts.has(key));
+    el.classList.toggle('sel', selOpts.has(el.id.replace('o','')));
   });
-  document.getElementById('submit').disabled = selOpts.size === 0;
+  document.getElementById('submit').disabled = selOpts.size===0;
 }
 
-function submit() {
+function doSubmit() {
   if (!queue.length || submitted) return;
   const q = queue[qi];
-  const correct = Array.isArray(q.ans) ? [...q.ans].sort().join('') : q.ans;
-  const given   = [...selOpts].sort().join('');
-  const ok = correct === given;
-  prog[q.id] = { ans: [...selOpts], ok };
+  const correct = getCorrect(q);
+  const ok = correct.sort().join('') === [...selOpts].sort().join('');
+  prog[q.id] = { ans:[...selOpts], ok };
   try { localStorage.setItem(LS_KEY, JSON.stringify(prog)); } catch(e) {}
   submitted = true;
   document.getElementById('submit').disabled = true;
-  // color options
   Object.keys(q.opts).forEach(k => {
     const el = document.getElementById('o'+k);
     if (!el) return;
     el.classList.remove('sel');
-    const corArr = Array.isArray(q.ans) ? q.ans : [q.ans];
-    if (corArr.includes(k)) el.classList.add('correct');
+    if (correct.includes(k)) el.classList.add('correct');
     else if (selOpts.has(k)) el.classList.add('wrong');
   });
   showResult(q, ok);
-  // update dot
   const d = document.getElementById('d'+qi);
   if (d) { d.classList.remove('ans-ok','ans-ng'); d.classList.add(ok?'ans-ok':'ans-ng'); }
-  updateHeader();
-  buildCatList();
+  updateHeader(); buildCatList();
 }
 
 function showResult(q, ok) {
   const res = document.getElementById('result');
-  const rh  = document.getElementById('rh');
-  const rn  = document.getElementById('rnote');
-  res.style.display = 'block';
-  res.className = ok ? 'ok' : 'ng';
-  const correctStr = Array.isArray(q.ans) ? q.ans.join('、') : q.ans;
-  rh.textContent = ok ? '✅ 回答正确！' : `❌ 回答错误，正确答案：${correctStr}`;
-  rn.textContent = q.note ? `解析：${q.note}` : '（暂无解析）';
+  res.style.display='block'; res.className = ok?'ok':'ng';
+  const correct = getCorrect(q);
+  document.getElementById('rh').textContent = ok ? '✅ 回答正确！' : `❌ 回答错误，正确答案：${correct.join('、')}`;
+  document.getElementById('rnote').textContent = q.note ? `解析：${q.note}` : '（暂无解析）';
 }
 
 function next() {
-  if (qi < queue.length - 1) {
-    qi++;
-    selOpts.clear();
-    submitted = false;
-    highlightDot();
-    showQ();
-  }
+  if (qi < queue.length-1) { qi++; selOpts.clear(); submitted=false; highlightDot(); showQ(); }
 }
 
-// ─── header stats ────────────────────────────────────────────────
+// ── header stats ──────────────────────────────────────────────────
 function updateHeader() {
-  const all = filteredQuestions();
-  const done = all.filter(q => prog[q.id] != null);
+  const all  = filteredQuestions();
+  const done = all.filter(q => prog[q.id]!=null);
   const ok   = done.filter(q => prog[q.id].ok);
   document.getElementById('hdone').textContent = done.length;
   document.getElementById('htotal').textContent = all.length;
@@ -445,33 +386,53 @@ function resetAll() {
   if (!confirm('确定重置所有进度？')) return;
   prog = {};
   try { localStorage.removeItem(LS_KEY); } catch(e) {}
-  buildCatList();
-  buildQueue();
-  updateHeader();
+  buildCatList(); buildQueue(); updateHeader();
 }
 
-// ─── quick preview ────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════
+// ── Knowledge Preview ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════
+// Pre-build keyword regex for highlighting
+const KW_PATTERN = ALLKWDS.length
+  ? new RegExp('(' + ALLKWDS.map(k => k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|') + ')', 'g')
+  : null;
+
+function hlText(parent, text) {
+  if (!text) return;
+  if (!KW_PATTERN) { parent.appendChild(document.createTextNode(text)); return; }
+  KW_PATTERN.lastIndex = 0;
+  const parts = text.split(KW_PATTERN);
+  const kwSet = new Set(ALLKWDS);
+  parts.forEach(p => {
+    if (!p) return;
+    if (kwSet.has(p)) {
+      const m = document.createElement('mark'); m.className='kw'; m.textContent=p;
+      parent.appendChild(m);
+    } else {
+      parent.appendChild(document.createTextNode(p));
+    }
+  });
+}
+
 let pvPool = [];
-const PV_PAGE = 80; // items per batch
 let pvShown = 0;
-
-function esc(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+const PV_BATCH = 60;
 
 function openPreview() {
+  // Build selects
   const srcSel = document.getElementById('pvSrcFilter');
   srcSel.innerHTML = '<option value="">全部来源</option>' +
-    ALLSRCS.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('');
+    ALLSRCS.map(s => `<option value="${s}">${s}</option>`).join('');
   const catSel = document.getElementById('pvCatFilter');
   catSel.innerHTML = '<option value="">全部分类</option>' +
-    ALLCATS.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
-  if (curCat) catSel.value = curCat;
-  if (curSrc !== '全部') srcSel.value = curSrc;
+    ALLCATS.map(c => `<option value="${c}">${c}</option>`).join('');
+  // Pre-set to current context
+  catSel.value = curCat || '';
+  srcSel.value = (curSrc !== '全部') ? curSrc : '';
   document.getElementById('pvSearch').value = '';
   document.getElementById('pvTypeFilter').value = '';
-  filterPreview();
   document.getElementById('pvOverlay').classList.add('open');
+  pvFilter();
 }
 
 function closePreview() {
@@ -479,10 +440,10 @@ function closePreview() {
 }
 
 function pvBgClick(e) {
-  if (e.target === document.getElementById('pvOverlay')) closePreview();
+  if (e.target.id === 'pvOverlay') closePreview();
 }
 
-function filterPreview() {
+function pvFilter() {
   const kw   = document.getElementById('pvSearch').value.trim().toLowerCase();
   const type = document.getElementById('pvTypeFilter').value;
   const src  = document.getElementById('pvSrcFilter').value;
@@ -493,144 +454,124 @@ function filterPreview() {
     if (src  && q.src  !== src)  return false;
     if (cat  && q.cat  !== cat)  return false;
     if (kw) {
-      const hay = (q.text + ' ' + Object.values(q.opts).join(' ') + ' ' + (q.note||'')).toLowerCase();
+      const hay = (q.text+' '+Object.values(q.opts).join(' ')+' '+(q.note||'')).toLowerCase();
       if (!hay.includes(kw)) return false;
     }
     return true;
   });
+
   pvShown = 0;
-  renderPreview(true);
+  // Clear list
+  const list = document.getElementById('pvList');
+  const empty = document.getElementById('pvEmpty');
+  [...list.children].forEach(c => { if (c.id !== 'pvEmpty') c.remove(); });
+  document.getElementById('pvMore') && document.getElementById('pvMore').remove();
+
+  const withNote = pvPool.filter(q => q.note).length;
+  document.getElementById('pvStats').innerHTML =
+    `共 <b>${pvPool.length}</b> 条知识点 &nbsp;·&nbsp; 有解析 <b>${withNote}</b> 条`;
+
+  if (!pvPool.length) { empty.style.display='block'; return; }
+  empty.style.display = 'none';
+  pvLoadMore();
 }
 
-function makePvcCard(q, idx) {
-  const correct = Array.isArray(q.ans) ? q.ans : (q.ans ? q.ans.split('') : []);
-  const ansStr  = correct.join('、') || '—';
-  const typeCls = {'单选':'tag-单选','多选':'tag-多选','判断':'tag-判断'}[q.type] || 'tag-单选';
-  const srcCls  = q.src === '泰迪云课堂' ? 'tag-src-td' : 'tag-src-ai';
-  const uid     = String(q.id).replace(/[^a-zA-Z0-9_-]/g, '_');
-
-  const wrap = document.createElement('div');
-  wrap.className = 'pvc';
-
-  // ── head ──
-  const head = document.createElement('div');
-  head.className = 'pvc-head';
-  head.onclick = () => pvToggle(uid);
-
-  const seq = document.createElement('span');
-  seq.className = 'pvc-seq';
-  seq.textContent = idx + 1;
-
-  const mid = document.createElement('div');
-  mid.style.flex = '1';
-
-  const tagsDiv = document.createElement('div');
-  tagsDiv.className = 'pvc-tags';
-  const t1 = document.createElement('span'); t1.className = `qtag ${typeCls}`; t1.textContent = q.type;
-  const t2 = document.createElement('span'); t2.className = `qtag ${srcCls}`;  t2.textContent = q.src;
-  const t3 = document.createElement('span'); t3.style.cssText = 'font-size:11px;color:#9ca3af;padding-top:2px'; t3.textContent = q.cat;
-  tagsDiv.append(t1, t2, t3);
-
-  const qDiv = document.createElement('div');
-  qDiv.className = 'pvc-q';
-  qDiv.textContent = q.text;
-
-  mid.append(tagsDiv, qDiv);
-
-  const ansSpan = document.createElement('span');
-  ansSpan.className = 'pvc-ans';
-  ansSpan.textContent = '答：' + ansStr;
-
-  const tog = document.createElement('span');
-  tog.className = 'pvc-toggle';
-  tog.id = 'pvt_' + uid;
-  tog.textContent = '▼';
-
-  head.append(seq, mid, ansSpan, tog);
-
-  // ── body ──
-  const body = document.createElement('div');
-  body.className = 'pvc-body';
-  body.id = 'pvb_' + uid;
-
-  const optsDiv = document.createElement('div');
-  optsDiv.className = 'pvc-opts';
-  Object.entries(q.opts).forEach(([k, v]) => {
-    const row = document.createElement('div');
-    row.className = 'pvc-opt' + (correct.includes(k) ? ' right' : '');
-    const kk = document.createElement('span'); kk.className = 'pvc-opt-k'; kk.textContent = k + '.';
-    const vv = document.createElement('span'); vv.textContent = v;
-    row.append(kk, vv);
-    optsDiv.appendChild(row);
-  });
-  body.appendChild(optsDiv);
-
-  if (q.note) {
-    const noteWrap = document.createElement('div');
-    noteWrap.className = 'pvc-note';
-    const noteTitle = document.createElement('div');
-    noteTitle.className = 'pvc-notitle';
-    noteTitle.textContent = '💡 解析';
-    const noteTxt = document.createElement('div');
-    noteTxt.textContent = q.note;
-    noteWrap.append(noteTitle, noteTxt);
-    body.appendChild(noteWrap);
-  }
-
-  wrap.append(head, body);
-  return wrap;
-}
-
-function renderPreview(reset) {
+function pvLoadMore() {
   const list  = document.getElementById('pvList');
   const empty = document.getElementById('pvEmpty');
-  const stats = document.getElementById('pvStats');
-  const total = pvPool.length;
-  const withNote = pvPool.filter(q => q.note).length;
-  stats.innerHTML = `共 <b>${total}</b> 题 &nbsp;|&nbsp; 有解析 <b>${withNote}</b> 题 &nbsp;|&nbsp; 点击题目展开选项与解析`;
+  const end   = Math.min(pvShown + PV_BATCH, pvPool.length);
+  const frag  = document.createDocumentFragment();
 
-  if (reset) {
-    [...list.children].forEach(c => { if (c.id !== 'pvEmpty' && c.id !== 'pvMore') c.remove(); });
-    const old = document.getElementById('pvMore');
-    if (old) old.remove();
-  }
-
-  if (!total) { empty.style.display = 'block'; return; }
-  empty.style.display = 'none';
-
-  const end = Math.min(pvShown + PV_PAGE, total);
-  const frag = document.createDocumentFragment();
   for (let i = pvShown; i < end; i++) {
-    frag.appendChild(makePvcCard(pvPool[i], i));
+    frag.appendChild(makeKPCard(pvPool[i], i));
   }
   pvShown = end;
 
-  // remove old "load more" btn before re-inserting
-  const oldMore = document.getElementById('pvMore');
-  if (oldMore) oldMore.remove();
+  // Remove old "more" button
+  const old = document.getElementById('pvMore');
+  if (old) old.remove();
 
   list.insertBefore(frag, empty);
 
-  if (pvShown < total) {
+  if (pvShown < pvPool.length) {
     const btn = document.createElement('button');
     btn.id = 'pvMore';
-    btn.textContent = `加载更多（还有 ${total - pvShown} 题）`;
-    btn.style.cssText = 'width:100%;padding:10px;margin:8px 0;border:1.5px dashed #a78bfa;background:#faf5ff;color:#6d28d9;border-radius:8px;font-size:13px;cursor:pointer;font-weight:600';
-    btn.onclick = () => renderPreview(false);
+    btn.textContent = `显示更多（还有 ${pvPool.length - pvShown} 条）`;
+    btn.onclick = pvLoadMore;
     list.insertBefore(btn, empty);
   }
 }
 
-function pvToggle(uid) {
-  const body   = document.getElementById('pvb_' + uid);
-  const toggle = document.getElementById('pvt_' + uid);
-  if (!body) return;
-  const isOpen = body.classList.contains('open');
-  body.classList.toggle('open', !isOpen);
-  toggle.classList.toggle('open', !isOpen);
+function makeKPCard(q, idx) {
+  const correct = getCorrect(q);
+  const wrap = document.createElement('div');
+  wrap.className = 'kpc';
+
+  // Meta tags
+  const meta = document.createElement('div');
+  meta.className = 'kpc-meta';
+  const t1 = document.createElement('span');
+  t1.className = `qtag ${TYPE_CLS[q.type]||'tag-single'}`;
+  t1.textContent = TYPE_LABEL[q.type] || q.type;
+  const t2 = document.createElement('span');
+  t2.className = `qtag ${q.src==='泰迪云课堂'?'tag-src-td':'tag-src-ai'}`;
+  t2.textContent = q.src;
+  const t3 = document.createElement('span');
+  t3.style.cssText = 'font-size:11px;color:#9ca3af';
+  t3.textContent = q.cat;
+  meta.append(t1, t2, t3);
+
+  // Question text
+  const qDiv = document.createElement('div');
+  qDiv.className = 'kpc-q';
+  hlText(qDiv, q.text);
+
+  wrap.append(meta, qDiv);
+
+  // True/false: just show answer badge
+  if (q.type === 'tf') {
+    const badge = document.createElement('div');
+    badge.className = 'kpc-ans-tf';
+    badge.textContent = '答案：' + (q.ans || '—');
+    wrap.appendChild(badge);
+  } else {
+    // Options: show all, highlight correct
+    if (Object.keys(q.opts).length) {
+      const optsDiv = document.createElement('div');
+      optsDiv.className = 'kpc-opts';
+      Object.entries(q.opts).forEach(([k, v]) => {
+        const row = document.createElement('div');
+        row.className = 'kpc-opt' + (correct.includes(k) ? ' right' : '');
+        const kk = document.createElement('span');
+        kk.className = 'kpc-opt-k';
+        kk.textContent = (correct.includes(k) ? '✓ ' : '') + k + '.';
+        const vv = document.createElement('span');
+        vv.style.flex = '1';
+        hlText(vv, v);
+        row.append(kk, vv);
+        optsDiv.appendChild(row);
+      });
+      wrap.appendChild(optsDiv);
+    }
+  }
+
+  // Explanation
+  if (q.note) {
+    const noteWrap = document.createElement('div');
+    noteWrap.className = 'kpc-note';
+    const lbl = document.createElement('div');
+    lbl.className = 'kpc-note-lbl';
+    lbl.textContent = '💡 解析';
+    const ntxt = document.createElement('div');
+    hlText(ntxt, q.note);
+    noteWrap.append(lbl, ntxt);
+    wrap.appendChild(noteWrap);
+  }
+
+  return wrap;
 }
 
-// ─── init ────────────────────────────────────────────────────────
+// ── init ──────────────────────────────────────────────────────────
 buildSrcFilter();
 buildCatList();
 buildQueue();
