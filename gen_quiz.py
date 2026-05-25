@@ -87,29 +87,27 @@ RULES = [
 ]
 
 def make_kp(q):
-    """Synthesise a one-sentence knowledge point from question + answer + explanation."""
+    """Synthesise a pure knowledge statement (no answer labels, no option letters)."""
     ans = q.get("ans", "")
     opts = q.get("opts", {})
     note = (q.get("note") or "").strip()
     qtext = q["text"].rstrip("（）()。？?…").strip()
 
+    # Explanation is pure knowledge — prefer it directly
+    if note:
+        return note
+
     if q["type"] == "tf":
-        kp = f"{qtext}（答案：{ans}）"
-        if note:
-            kp += f"——{note}"
+        # Turn question stem into a factual statement by appending the verdict
+        verdict = "正确" if ans == "正确" else "错误"
+        return f"{qtext}。（{verdict}）"
     else:
         correct_keys = [c for c in ans] if ans and ans not in ("正确", "错误") else []
         correct_texts = [opts[k] for k in correct_keys if k in opts]
-        if note:
-            if correct_texts:
-                kp = f"【{'、'.join(correct_keys)}】{correct_texts[0] if len(correct_texts)==1 else '、'.join(correct_texts)}。{note}"
-            else:
-                kp = note
-        elif correct_texts:
-            kp = f"{qtext}——正确答案：{'；'.join(f'{k}. {v}' for k, v in zip(correct_keys, correct_texts))}"
-        else:
-            kp = qtext
-    return kp
+        if correct_texts:
+            # Just the correct answer text(s), no letter prefix
+            return "；".join(correct_texts)
+        return qtext
 
 def categorize(q):
     txt = q["text"] + " " + " ".join(q["opts"].values()) + " " + q["note"]
