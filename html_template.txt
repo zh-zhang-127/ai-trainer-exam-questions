@@ -96,17 +96,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 #pvList{flex:1;overflow-y:auto;padding:10px 14px;display:flex;flex-direction:column;gap:10px}
 
 /* ── knowledge point card ── */
-.kpc{background:#fff;border-radius:10px;border:1.5px solid #e5e7eb;padding:13px 16px}
-.kpc-meta{display:flex;gap:5px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
-.kpc-q{font-size:14px;line-height:1.65;color:#111827;margin-bottom:10px;font-weight:500}
-.kpc-opts{display:flex;flex-direction:column;gap:4px;margin-bottom:9px}
-.kpc-opt{display:flex;gap:8px;font-size:13px;padding:6px 10px;border-radius:6px;border:1.5px solid #e5e7eb;line-height:1.5;color:#374151}
-.kpc-opt.right{border-color:#22c55e;background:#f0fdf4;font-weight:700;color:#065f46}
-.kpc-opt-k{font-weight:700;min-width:18px;flex-shrink:0}
-.kpc-note{font-size:13px;color:#374151;background:#fffbeb;padding:9px 12px;border-radius:7px;border-left:3px solid #f59e0b;line-height:1.7}
-.kpc-note-lbl{font-size:11px;font-weight:700;color:#d97706;margin-bottom:3px}
-.kpc-ans-tf{display:inline-block;padding:4px 14px;border-radius:8px;font-size:14px;font-weight:700;background:#dcfce7;color:#166534;margin-bottom:8px}
+.kpc{background:#fff;border-radius:10px;border:1.5px solid #e5e7eb;padding:11px 15px;display:flex;gap:10px;align-items:flex-start}
+.kpc-idx{font-size:11px;color:#9ca3af;min-width:28px;padding-top:3px;flex-shrink:0}
+.kpc-body{flex:1;min-width:0}
+.kpc-meta{display:flex;gap:5px;align-items:center;margin-bottom:6px;flex-wrap:wrap}
+.kpc-kp{font-size:14px;line-height:1.7;color:#111827}
 mark.kw{background:#fde68a;color:#78350f;border-radius:2px;padding:0 2px;font-style:normal}
+.kpc-cat{font-size:11px;color:#9ca3af;margin-top:5px}
 #pvEmpty{text-align:center;color:#9ca3af;padding:60px 20px;font-size:15px;display:none}
 #pvMore{width:100%;padding:10px;border:1.5px dashed #a78bfa;background:#faf5ff;color:#6d28d9;border-radius:8px;font-size:13px;cursor:pointer;font-weight:600;margin:4px 0}
 #pvMore:hover{background:#ede9fe}
@@ -454,7 +450,7 @@ function pvFilter() {
     if (src  && q.src  !== src)  return false;
     if (cat  && q.cat  !== cat)  return false;
     if (kw) {
-      const hay = (q.text+' '+Object.values(q.opts).join(' ')+' '+(q.note||'')).toLowerCase();
+      const hay = (q.text+' '+(q.kp||'')+' '+(q.note||'')).toLowerCase();
       if (!hay.includes(kw)) return false;
     }
     return true;
@@ -503,11 +499,19 @@ function pvLoadMore() {
 }
 
 function makeKPCard(q, idx) {
-  const correct = getCorrect(q);
   const wrap = document.createElement('div');
   wrap.className = 'kpc';
 
-  // Meta tags
+  // Index number
+  const idxEl = document.createElement('div');
+  idxEl.className = 'kpc-idx';
+  idxEl.textContent = idx + 1;
+  wrap.appendChild(idxEl);
+
+  const body = document.createElement('div');
+  body.className = 'kpc-body';
+
+  // Type + source meta tags
   const meta = document.createElement('div');
   meta.className = 'kpc-meta';
   const t1 = document.createElement('span');
@@ -516,58 +520,22 @@ function makeKPCard(q, idx) {
   const t2 = document.createElement('span');
   t2.className = `qtag ${q.src==='泰迪云课堂'?'tag-src-td':'tag-src-ai'}`;
   t2.textContent = q.src;
-  const t3 = document.createElement('span');
-  t3.style.cssText = 'font-size:11px;color:#9ca3af';
-  t3.textContent = q.cat;
-  meta.append(t1, t2, t3);
+  meta.append(t1, t2);
+  body.appendChild(meta);
 
-  // Question text
-  const qDiv = document.createElement('div');
-  qDiv.className = 'kpc-q';
-  hlText(qDiv, q.text);
+  // One-sentence knowledge point
+  const kpEl = document.createElement('div');
+  kpEl.className = 'kpc-kp';
+  hlText(kpEl, q.kp || q.text);
+  body.appendChild(kpEl);
 
-  wrap.append(meta, qDiv);
+  // Category (small, below)
+  const catEl = document.createElement('div');
+  catEl.className = 'kpc-cat';
+  catEl.textContent = q.cat;
+  body.appendChild(catEl);
 
-  // True/false: just show answer badge
-  if (q.type === 'tf') {
-    const badge = document.createElement('div');
-    badge.className = 'kpc-ans-tf';
-    badge.textContent = '答案：' + (q.ans || '—');
-    wrap.appendChild(badge);
-  } else {
-    // Options: show all, highlight correct
-    if (Object.keys(q.opts).length) {
-      const optsDiv = document.createElement('div');
-      optsDiv.className = 'kpc-opts';
-      Object.entries(q.opts).forEach(([k, v]) => {
-        const row = document.createElement('div');
-        row.className = 'kpc-opt' + (correct.includes(k) ? ' right' : '');
-        const kk = document.createElement('span');
-        kk.className = 'kpc-opt-k';
-        kk.textContent = (correct.includes(k) ? '✓ ' : '') + k + '.';
-        const vv = document.createElement('span');
-        vv.style.flex = '1';
-        hlText(vv, v);
-        row.append(kk, vv);
-        optsDiv.appendChild(row);
-      });
-      wrap.appendChild(optsDiv);
-    }
-  }
-
-  // Explanation
-  if (q.note) {
-    const noteWrap = document.createElement('div');
-    noteWrap.className = 'kpc-note';
-    const lbl = document.createElement('div');
-    lbl.className = 'kpc-note-lbl';
-    lbl.textContent = '💡 解析';
-    const ntxt = document.createElement('div');
-    hlText(ntxt, q.note);
-    noteWrap.append(lbl, ntxt);
-    wrap.appendChild(noteWrap);
-  }
-
+  wrap.appendChild(body);
   return wrap;
 }
 

@@ -86,6 +86,31 @@ RULES = [
     ("职业培训体系", ["初级培训","中级培训","初级知识","中级知识","AI训练师","培训体系","知识体系"]),
 ]
 
+def make_kp(q):
+    """Synthesise a one-sentence knowledge point from question + answer + explanation."""
+    ans = q.get("ans", "")
+    opts = q.get("opts", {})
+    note = (q.get("note") or "").strip()
+    qtext = q["text"].rstrip("（）()。？?…").strip()
+
+    if q["type"] == "tf":
+        kp = f"{qtext}（答案：{ans}）"
+        if note:
+            kp += f"——{note}"
+    else:
+        correct_keys = [c for c in ans] if ans and ans not in ("正确", "错误") else []
+        correct_texts = [opts[k] for k in correct_keys if k in opts]
+        if note:
+            if correct_texts:
+                kp = f"【{'、'.join(correct_keys)}】{correct_texts[0] if len(correct_texts)==1 else '、'.join(correct_texts)}。{note}"
+            else:
+                kp = note
+        elif correct_texts:
+            kp = f"{qtext}——正确答案：{'；'.join(f'{k}. {v}' for k, v in zip(correct_keys, correct_texts))}"
+        else:
+            kp = qtext
+    return kp
+
 def categorize(q):
     txt = q["text"] + " " + " ".join(q["opts"].values()) + " " + q["note"]
     for cat, kws in RULES:
@@ -95,6 +120,8 @@ def categorize(q):
 
 for q in questions:
     q["cat"] = categorize(q)
+    q["kp"]  = make_kp(q)
+
 
 cc = Counter(q["cat"] for q in questions)
 CATS = [c for c, _ in RULES if cc.get(c, 0) > 0]
