@@ -124,7 +124,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
     <div id="hpct">正确率 <b id="hacc">-</b></div>
     <div class="hbar"><div class="hbar-f" id="hbarf"></div></div>
   </div>
-  <button class="hpreview" onclick="openPreview()">📖 快速预览</button>
+  <button class="hpreview" onclick="openPreview()">💡 知识点</button>
   <button class="hreset" onclick="resetAll()">重置进度</button>
 </div>
 
@@ -132,7 +132,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 <div id="pvOverlay" onclick="pvBgClick(event)">
   <div id="pvPanel">
     <div id="pvHead">
-      <div class="pvtitle">📖 快速预览</div>
+      <div class="pvtitle">💡 知识点速览</div>
       <input id="pvSearch" type="text" placeholder="🔍 搜索题目或知识点…" oninput="filterPreview()">
       <select id="pvTypeFilter" onchange="filterPreview()">
         <option value="">全部题型</option>
@@ -452,15 +452,20 @@ function resetAll() {
 
 // ─── quick preview ────────────────────────────────────────────────
 let pvPool = [];
+const PV_PAGE = 80; // items per batch
+let pvShown = 0;
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
 function openPreview() {
-  // populate source/cat selects
   const srcSel = document.getElementById('pvSrcFilter');
   srcSel.innerHTML = '<option value="">全部来源</option>' +
-    ALLSRCS.map(s => `<option value="${s}">${s}</option>`).join('');
+    ALLSRCS.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('');
   const catSel = document.getElementById('pvCatFilter');
   catSel.innerHTML = '<option value="">全部分类</option>' +
-    ALLCATS.map(c => `<option value="${c}">${c}</option>`).join('');
+    ALLCATS.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
   if (curCat) catSel.value = curCat;
   if (curSrc !== '全部') srcSel.value = curSrc;
   document.getElementById('pvSearch').value = '';
@@ -478,93 +483,149 @@ function pvBgClick(e) {
 }
 
 function filterPreview() {
-  const kw    = document.getElementById('pvSearch').value.trim().toLowerCase();
-  const type  = document.getElementById('pvTypeFilter').value;
-  const src   = document.getElementById('pvSrcFilter').value;
-  const cat   = document.getElementById('pvCatFilter').value;
+  const kw   = document.getElementById('pvSearch').value.trim().toLowerCase();
+  const type = document.getElementById('pvTypeFilter').value;
+  const src  = document.getElementById('pvSrcFilter').value;
+  const cat  = document.getElementById('pvCatFilter').value;
 
   pvPool = ALLQ.filter(q => {
     if (type && q.type !== type) return false;
     if (src  && q.src  !== src)  return false;
     if (cat  && q.cat  !== cat)  return false;
     if (kw) {
-      const hay = (q.text + ' ' + Object.values(q.opts).join(' ') + ' ' + q.note).toLowerCase();
+      const hay = (q.text + ' ' + Object.values(q.opts).join(' ') + ' ' + (q.note||'')).toLowerCase();
       if (!hay.includes(kw)) return false;
     }
     return true;
   });
-
-  renderPreview();
+  pvShown = 0;
+  renderPreview(true);
 }
 
-function renderPreview() {
+function makePvcCard(q, idx) {
+  const correct = Array.isArray(q.ans) ? q.ans : (q.ans ? q.ans.split('') : []);
+  const ansStr  = correct.join('、') || '—';
+  const typeCls = {'单选':'tag-单选','多选':'tag-多选','判断':'tag-判断'}[q.type] || 'tag-单选';
+  const srcCls  = q.src === '泰迪云课堂' ? 'tag-src-td' : 'tag-src-ai';
+  const uid     = String(q.id).replace(/[^a-zA-Z0-9_-]/g, '_');
+
+  const wrap = document.createElement('div');
+  wrap.className = 'pvc';
+
+  // ── head ──
+  const head = document.createElement('div');
+  head.className = 'pvc-head';
+  head.onclick = () => pvToggle(uid);
+
+  const seq = document.createElement('span');
+  seq.className = 'pvc-seq';
+  seq.textContent = idx + 1;
+
+  const mid = document.createElement('div');
+  mid.style.flex = '1';
+
+  const tagsDiv = document.createElement('div');
+  tagsDiv.className = 'pvc-tags';
+  const t1 = document.createElement('span'); t1.className = `qtag ${typeCls}`; t1.textContent = q.type;
+  const t2 = document.createElement('span'); t2.className = `qtag ${srcCls}`;  t2.textContent = q.src;
+  const t3 = document.createElement('span'); t3.style.cssText = 'font-size:11px;color:#9ca3af;padding-top:2px'; t3.textContent = q.cat;
+  tagsDiv.append(t1, t2, t3);
+
+  const qDiv = document.createElement('div');
+  qDiv.className = 'pvc-q';
+  qDiv.textContent = q.text;
+
+  mid.append(tagsDiv, qDiv);
+
+  const ansSpan = document.createElement('span');
+  ansSpan.className = 'pvc-ans';
+  ansSpan.textContent = '答：' + ansStr;
+
+  const tog = document.createElement('span');
+  tog.className = 'pvc-toggle';
+  tog.id = 'pvt_' + uid;
+  tog.textContent = '▼';
+
+  head.append(seq, mid, ansSpan, tog);
+
+  // ── body ──
+  const body = document.createElement('div');
+  body.className = 'pvc-body';
+  body.id = 'pvb_' + uid;
+
+  const optsDiv = document.createElement('div');
+  optsDiv.className = 'pvc-opts';
+  Object.entries(q.opts).forEach(([k, v]) => {
+    const row = document.createElement('div');
+    row.className = 'pvc-opt' + (correct.includes(k) ? ' right' : '');
+    const kk = document.createElement('span'); kk.className = 'pvc-opt-k'; kk.textContent = k + '.';
+    const vv = document.createElement('span'); vv.textContent = v;
+    row.append(kk, vv);
+    optsDiv.appendChild(row);
+  });
+  body.appendChild(optsDiv);
+
+  if (q.note) {
+    const noteWrap = document.createElement('div');
+    noteWrap.className = 'pvc-note';
+    const noteTitle = document.createElement('div');
+    noteTitle.className = 'pvc-notitle';
+    noteTitle.textContent = '💡 解析';
+    const noteTxt = document.createElement('div');
+    noteTxt.textContent = q.note;
+    noteWrap.append(noteTitle, noteTxt);
+    body.appendChild(noteWrap);
+  }
+
+  wrap.append(head, body);
+  return wrap;
+}
+
+function renderPreview(reset) {
   const list  = document.getElementById('pvList');
   const empty = document.getElementById('pvEmpty');
   const stats = document.getElementById('pvStats');
-
   const total = pvPool.length;
   const withNote = pvPool.filter(q => q.note).length;
-  stats.innerHTML = `共 <b>${total}</b> 题 &nbsp;|&nbsp; 有解析 <b>${withNote}</b> 题 &nbsp;|&nbsp; 点击题目可展开选项与解析`;
+  stats.innerHTML = `共 <b>${total}</b> 题 &nbsp;|&nbsp; 有解析 <b>${withNote}</b> 题 &nbsp;|&nbsp; 点击题目展开选项与解析`;
 
-  if (!total) {
-    empty.style.display = 'block';
-    // Remove old cards
-    [...list.children].forEach(c => { if (c.id !== 'pvEmpty') c.remove(); });
-    return;
+  if (reset) {
+    [...list.children].forEach(c => { if (c.id !== 'pvEmpty' && c.id !== 'pvMore') c.remove(); });
+    const old = document.getElementById('pvMore');
+    if (old) old.remove();
   }
+
+  if (!total) { empty.style.display = 'block'; return; }
   empty.style.display = 'none';
 
+  const end = Math.min(pvShown + PV_PAGE, total);
   const frag = document.createDocumentFragment();
-  pvPool.forEach((q, idx) => {
-    const div = document.createElement('div');
-    div.className = 'pvc';
-    div.id = 'pvc_' + q.id;
+  for (let i = pvShown; i < end; i++) {
+    frag.appendChild(makePvcCard(pvPool[i], i));
+  }
+  pvShown = end;
 
-    const correct = Array.isArray(q.ans) ? q.ans : (q.ans ? [q.ans] : []);
-    const ansStr  = correct.join('、') || '—';
-    const typeCls = {'单选':'tag-单选','多选':'tag-多选','判断':'tag-判断'}[q.type] || 'tag-单选';
-    const srcCls  = q.src === '泰迪云课堂' ? 'tag-src-td' : 'tag-src-ai';
+  // remove old "load more" btn before re-inserting
+  const oldMore = document.getElementById('pvMore');
+  if (oldMore) oldMore.remove();
 
-    // Options HTML
-    const optsHtml = Object.entries(q.opts).map(([k, v]) => {
-      const isRight = correct.includes(k);
-      return `<div class="pvc-opt${isRight?' right':''}"><span class="pvc-opt-k">${k}.</span><span>${v}</span></div>`;
-    }).join('');
-
-    const noteHtml = q.note
-      ? `<div class="pvc-note"><div class="pvc-notitle">💡 解析</div>${q.note}</div>`
-      : '';
-
-    div.innerHTML = `
-      <div class="pvc-head" onclick="pvToggle('${q.id}')">
-        <span class="pvc-seq">${idx+1}</span>
-        <div style="flex:1">
-          <div class="pvc-tags">
-            <span class="qtag ${typeCls}">${q.type}</span>
-            <span class="qtag ${srcCls}">${q.src}</span>
-            <span style="font-size:11px;color:#9ca3af;padding-top:2px">${q.cat}</span>
-          </div>
-          <div class="pvc-q">${q.text}</div>
-        </div>
-        <span class="pvc-ans">答：${ansStr}</span>
-        <span class="pvc-toggle" id="pvt_${q.id}">▼</span>
-      </div>
-      <div class="pvc-body" id="pvb_${q.id}">
-        <div class="pvc-opts">${optsHtml}</div>
-        ${noteHtml}
-      </div>`;
-    frag.appendChild(div);
-  });
-
-  // Replace old cards (keep pvEmpty)
-  [...list.children].forEach(c => { if (c.id !== 'pvEmpty') c.remove(); });
   list.insertBefore(frag, empty);
+
+  if (pvShown < total) {
+    const btn = document.createElement('button');
+    btn.id = 'pvMore';
+    btn.textContent = `加载更多（还有 ${total - pvShown} 题）`;
+    btn.style.cssText = 'width:100%;padding:10px;margin:8px 0;border:1.5px dashed #a78bfa;background:#faf5ff;color:#6d28d9;border-radius:8px;font-size:13px;cursor:pointer;font-weight:600';
+    btn.onclick = () => renderPreview(false);
+    list.insertBefore(btn, empty);
+  }
 }
 
-function pvToggle(id) {
-  const body    = document.getElementById('pvb_' + id);
-  const toggle  = document.getElementById('pvt_' + id);
-  const isOpen  = body.classList.contains('open');
+function pvToggle(uid) {
+  const body   = document.getElementById('pvb_' + uid);
+  const toggle = document.getElementById('pvt_' + uid);
+  if (!body) return;
+  const isOpen = body.classList.contains('open');
   body.classList.toggle('open', !isOpen);
   toggle.classList.toggle('open', !isOpen);
 }
