@@ -178,11 +178,15 @@ mark.kw{background:#fde68a;color:#78350f;border-radius:2px;padding:0 2px;font-st
   </div>
 </div>
 
+<script type="application/json" id="_d0">QDATA_PH</script>
+<script type="application/json" id="_d1">CATS_PH</script>
+<script type="application/json" id="_d2">SRCS_PH</script>
+<script type="application/json" id="_d3">KWDS_PH</script>
 <script>
-const ALLQ    = QDATA_PH;
-const ALLCATS = CATS_PH;
-const ALLSRCS = SRCS_PH;
-const ALLKWDS = KWDS_PH;
+const ALLQ    = JSON.parse(document.getElementById('_d0').textContent);
+const ALLCATS = JSON.parse(document.getElementById('_d1').textContent);
+const ALLSRCS = JSON.parse(document.getElementById('_d2').textContent);
+const ALLKWDS = JSON.parse(document.getElementById('_d3').textContent);
 
 // ── type helpers ──────────────────────────────────────────────────
 const TYPE_LABEL = {single:'单选', multi:'多选', tf:'判断'};
@@ -213,7 +217,7 @@ let submitted = false;
 function buildSrcFilter() {
   const c = document.getElementById('srcFilter');
   c.innerHTML = ['全部', ...ALLSRCS].map(s =>
-    `<button class="sfbtn${s===curSrc?' on':''}" onclick="setSrc('${s.replace(/'/g,"\\'")}'">${s}</button>`
+    '<button class="sfbtn' + (s===curSrc?' on':'') + '" onclick="setSrc(\'' + s.replace(/'/g,"\\'") + '\')">' + s + '<\/button>'
   ).join('');
 }
 function setSrc(s) { curSrc = s; buildSrcFilter(); buildCatList(); buildQueue(); }
@@ -236,11 +240,11 @@ function buildCatList() {
     const total = cc[c]||0;
     const done  = fq.filter(q => q.cat===c && prog[q.id]!=null).length;
     const pct   = total ? Math.round(done/total*100) : 0;
-    return `<div class="ci${c===curCat?' on':''}" onclick="pickCat('${c.replace(/'/g,"\\'")}')">
-      ${c}<span class="ci-cnt">${done}/${total}</span>
-      <div style="height:3px;background:#e5e7eb;border-radius:2px;margin-top:4px">
-        <div style="height:100%;width:${pct}%;background:#7c3aed;border-radius:2px"></div>
-      </div></div>`;
+    return '<div class="ci' + (c===curCat?' on':'') + '" onclick="pickCat(\'' + c.replace(/'/g,"\\'") + '\')">\n' +
+      '  ' + c + '<span class="ci-cnt">' + done + '\/' + total + '<\/span>\n' +
+      '  <div style="height:3px;background:#e5e7eb;border-radius:2px;margin-top:4px">\n' +
+      '    <div style="height:100%;width:' + pct + '%;background:#7c3aed;border-radius:2px"><\/div>\n' +
+      '  <\/div><\/div>';
   }).join('');
 }
 function pickCat(c) { curCat = c; buildCatList(); buildQueue(); }
@@ -265,7 +269,7 @@ function setMode(m) {
 function buildDots() {
   document.getElementById('dotbox').innerHTML = queue.map((q,i) => {
     const p = prog[q.id];
-    return `<div class="dot${p?(p.ok?' ans-ok':' ans-ng'):''}" id="d${i}" title="第${i+1}题" onclick="jumpTo(${i})"></div>`;
+    return '<div class="dot' + (p?(p.ok?' ans-ok':' ans-ng'):'') + '" id="d' + i + '" title="第' + (i+1) + '题" onclick="jumpTo(' + i + ')"><\/div>';
   }).join('');
   highlightDot();
 }
@@ -297,10 +301,10 @@ function showQ() {
   const correct = getCorrect(q);
 
   document.getElementById('qnum').innerHTML =
-    `<span>第 ${qi+1} / ${queue.length} 题</span>
-     <span class="qtag ${TYPE_CLS[q.type]||'tag-single'}">${TYPE_LABEL[q.type]||q.type}</span>
-     <span class="qtag ${q.src==='泰迪云课堂'?'tag-src-td':'tag-src-ai'}">${q.src}</span>
-     <span style="color:#9ca3af;font-size:11px">${q.cat}</span>`;
+    '<span>第 ' + (qi+1) + ' \/ ' + queue.length + ' 题<\/span> ' +
+    '<span class="qtag ' + (TYPE_CLS[q.type]||'tag-single') + '">' + (TYPE_LABEL[q.type]||q.type) + '<\/span> ' +
+    '<span class="qtag ' + (q.src==='泰迪云课堂'?'tag-src-td':'tag-src-ai') + '">' + q.src + '<\/span> ' +
+    '<span style="color:#9ca3af;font-size:11px">' + q.cat + '<\/span>';
   document.getElementById('qtext').textContent = q.text;
   document.getElementById('multi-hint').style.display = q.type==='multi'?'block':'none';
 
@@ -311,9 +315,9 @@ function showQ() {
       if (correct.includes(k)) cls+=' correct';
       else if (selOpts.has(k)) cls+=' wrong';
     } else if (selOpts.has(k)) cls+=' sel';
-    return `<div class="${cls}" id="o${k}" onclick="pick('${k}')">
-      <span class="opt-key">${k}</span>
-      <span class="opt-txt">${q.opts[k]}</span></div>`;
+    return '<div class="' + cls + '" id="o' + k + '" onclick="pick(\'' + k + '\')">' +
+      '<span class="opt-key">' + k + '<\/span>' +
+      '<span class="opt-txt">' + q.opts[k] + '<\/span><\/div>';
   }).join('');
 
   sub.disabled = submitted || selOpts.size===0;
@@ -358,8 +362,8 @@ function showResult(q, ok) {
   const res = document.getElementById('result');
   res.style.display='block'; res.className = ok?'ok':'ng';
   const correct = getCorrect(q);
-  document.getElementById('rh').textContent = ok ? '✅ 回答正确！' : `❌ 回答错误，正确答案：${correct.join('、')}`;
-  document.getElementById('rnote').textContent = q.note ? `解析：${q.note}` : '（暂无解析）';
+  document.getElementById('rh').textContent = ok ? '✅ 回答正确！' : '❌ 回答错误，正确答案：' + correct.join('、');
+  document.getElementById('rnote').textContent = q.note ? '解析：' + q.note : '（暂无解析）';
 }
 
 function next() {
@@ -417,11 +421,11 @@ const PV_BATCH = 60;
 function openPreview() {
   // Build selects
   const srcSel = document.getElementById('pvSrcFilter');
-  srcSel.innerHTML = '<option value="">全部来源</option>' +
-    ALLSRCS.map(s => `<option value="${s}">${s}</option>`).join('');
+  srcSel.innerHTML = '<option value="">全部来源<\/option>' +
+    ALLSRCS.map(s => '<option value="' + s + '">' + s + '<\/option>').join('');
   const catSel = document.getElementById('pvCatFilter');
-  catSel.innerHTML = '<option value="">全部分类</option>' +
-    ALLCATS.map(c => `<option value="${c}">${c}</option>`).join('');
+  catSel.innerHTML = '<option value="">全部分类<\/option>' +
+    ALLCATS.map(c => '<option value="' + c + '">' + c + '<\/option>').join('');
   // Pre-set to current context
   catSel.value = curCat || '';
   srcSel.value = (curSrc !== '全部') ? curSrc : '';
@@ -465,7 +469,7 @@ function pvFilter() {
 
   const withNote = pvPool.filter(q => q.note).length;
   document.getElementById('pvStats').innerHTML =
-    `共 <b>${pvPool.length}</b> 条知识点 &nbsp;·&nbsp; 有解析 <b>${withNote}</b> 条`;
+    '共 <b>' + pvPool.length + '<\/b> 条知识点 &nbsp;·&nbsp; 有解析 <b>' + withNote + '<\/b> 条';
 
   if (!pvPool.length) { empty.style.display='block'; return; }
   empty.style.display = 'none';
@@ -492,7 +496,7 @@ function pvLoadMore() {
   if (pvShown < pvPool.length) {
     const btn = document.createElement('button');
     btn.id = 'pvMore';
-    btn.textContent = `显示更多（还有 ${pvPool.length - pvShown} 条）`;
+    btn.textContent = '显示更多（还有 ' + (pvPool.length - pvShown) + ' 条）';
     btn.onclick = pvLoadMore;
     list.insertBefore(btn, empty);
   }
@@ -515,10 +519,10 @@ function makeKPCard(q, idx) {
   const meta = document.createElement('div');
   meta.className = 'kpc-meta';
   const t1 = document.createElement('span');
-  t1.className = `qtag ${TYPE_CLS[q.type]||'tag-single'}`;
+  t1.className = 'qtag ' + (TYPE_CLS[q.type]||'tag-single');
   t1.textContent = TYPE_LABEL[q.type] || q.type;
   const t2 = document.createElement('span');
-  t2.className = `qtag ${q.src==='泰迪云课堂'?'tag-src-td':'tag-src-ai'}`;
+  t2.className = 'qtag ' + (q.src==='泰迪云课堂'?'tag-src-td':'tag-src-ai');
   t2.textContent = q.src;
   meta.append(t1, t2);
   body.appendChild(meta);

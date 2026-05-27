@@ -135,7 +135,7 @@ for c in CATS:
 SRCS = sorted(set(q["src"] for q in questions))
 # All keywords flat list for JS highlighting
 KWDS = sorted(set(kw for _, kws in RULES for kw in kws), key=len, reverse=True)
-q_json    = json.dumps(questions, ensure_ascii=False, separators=(",",":"))
+q_json    = json.dumps(questions, ensure_ascii=False, separators=(",",":")).replace("<", "\\u003c").replace("`", "\\u0060")
 cats_json = json.dumps(CATS, ensure_ascii=False, separators=(",",":"))
 srcs_json = json.dumps(SRCS, ensure_ascii=False, separators=(",",":"))
 kwds_json = json.dumps(KWDS, ensure_ascii=False, separators=(",",":"))
