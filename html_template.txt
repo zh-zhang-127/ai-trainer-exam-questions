@@ -41,43 +41,65 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 .ci-cnt{font-size:11px;color:#9ca3af;float:right;margin-top:2px}
 
 /* ── main ── */
-#main{flex:1;display:flex;flex-direction:column;overflow:hidden;padding:16px}
-#dotbox{display:flex;flex-wrap:wrap;gap:4px;padding:8px 12px;background:#fff;border-radius:10px;margin-bottom:12px;max-height:96px;overflow-y:auto;flex-shrink:0}
-.dot{width:14px;height:14px;border-radius:3px;cursor:pointer;background:#e5e7eb;border:1px solid transparent;transition:background .1s}
-.dot.ans-ok{background:#bbf7d0}
-.dot.ans-ng{background:#fecaca}
-.dot.cur{border-color:#7c3aed;box-shadow:0 0 0 2px #ede9fe}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;padding:8px 10px;gap:6px}
+#dotbox{display:flex;flex-wrap:wrap;gap:3px;padding:6px 10px;background:#fff;border-radius:8px;max-height:96px;overflow-y:auto;flex-shrink:0}
+.dot{min-width:28px;height:22px;line-height:22px;padding:0 3px;border-radius:4px;cursor:pointer;background:#e5e7eb;border:1px solid transparent;font-size:11px;font-weight:600;color:#374151;text-align:center;transition:background .15s,color .15s,transform .1s,box-shadow .1s;user-select:none}
+.dot:active{transform:scale(.82);box-shadow:0 0 0 3px rgba(99,102,241,.35)}
+@keyframes dot-pop{0%{transform:scale(.82)}60%{transform:scale(1.18)}100%{transform:scale(1)}}
+.dot.clicked{animation:dot-pop .22s ease-out}
+.dot.ans-ok{background:#bbf7d0;color:#166534}
+.dot.ans-ng{background:#fecaca;color:#991b1b}
+.dot.ans-sel{background:#c7d2fe;color:#3730a3}
+.dot.cur-page{}
 
-/* ── card ── */
-#card{flex:1;overflow-y:auto;background:#fff;border-radius:12px;padding:22px 26px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-#qnum{font-size:12px;color:#9ca3af;margin-bottom:6px;display:flex;align-items:center;gap:8px}
-.qtag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+/* ── page nav ── */
+.page-nav{display:flex;align-items:center;gap:6px;padding:5px 10px;background:#fff;border-radius:8px;flex-shrink:0;flex-wrap:wrap}
+.page-nav button{padding:5px 12px;border-radius:6px;border:1.5px solid #e5e7eb;cursor:pointer;font-size:12px;font-weight:600;background:#f9fafb;color:#374151;transition:all .15s}
+.page-nav button:hover:not(:disabled){background:#ede9fe;border-color:#a78bfa;color:#6d28d9}
+.page-nav button:disabled{opacity:.4;cursor:default}
+.pnav-info{flex:1;text-align:center;font-size:12px;color:#6b7280}
+.btn-sub-page{background:#7c3aed;color:#fff;border-color:#7c3aed}
+.btn-sub-page:hover:not(:disabled){background:#6d28d9 !important;border-color:#6d28d9 !important}
+
+/* ── question list ── */
+#qlist{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-bottom:4px}
+
+/* ── question card ── */
+.qcard{background:#fff;border-radius:8px;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,.05);border-left:4px solid #e5e7eb}
+.qcard.done-ok{border-left-color:#22c55e}
+.qcard.done-ng{border-left-color:#ef4444}
+.qcard-hd{display:flex;align-items:center;gap:6px;margin-bottom:7px;flex-wrap:wrap}
+.qcard-num{font-size:12px;font-weight:700;color:#6b7280}
+.qcard-status{margin-left:auto;font-size:11px;font-weight:600;padding:1px 7px;border-radius:10px;white-space:nowrap}
+.qs-pending{background:#f3f4f6;color:#9ca3af}
+.qs-sel{background:#dbeafe;color:#1d4ed8}
+.qs-ok{background:#dcfce7;color:#15803d}
+.qs-ng{background:#fee2e2;color:#dc2626}
+.qcard-text{font-size:14px;line-height:1.65;margin-bottom:10px;white-space:pre-wrap;color:#1a1a2e}
+.multi-hint{font-size:11px;color:#f59e0b;margin:-4px 0 8px;font-weight:600}
+.qtag{display:inline-block;padding:1px 7px;border-radius:10px;font-size:11px;font-weight:600}
 .tag-single{background:#dbeafe;color:#1d4ed8}
 .tag-multi{background:#fef3c7;color:#92400e}
 .tag-tf{background:#d1fae5;color:#065f46}
 .tag-src-ai{background:#ede9fe;color:#5b21b6}
 .tag-src-td{background:#fce7f3;color:#9d174d}
-#qtext{font-size:17px;line-height:1.7;margin-bottom:18px;white-space:pre-wrap}
-.opts{display:flex;flex-direction:column;gap:8px}
-.opt{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-radius:8px;border:1.5px solid #e5e7eb;cursor:pointer;transition:all .15s;line-height:1.55}
-.opt:hover{border-color:#a78bfa;background:#faf5ff}
-.opt.sel{border-color:#7c3aed;background:#ede9fe}
-.opt.correct{border-color:#22c55e;background:#f0fdf4;font-weight:600}
-.opt.wrong{border-color:#ef4444;background:#fef2f2}
-.opt-key{font-weight:700;font-size:14px;flex-shrink:0;width:20px}
-.opt-txt{flex:1}
-#multi-hint{font-size:12px;color:#f59e0b;margin:-6px 0 10px;font-weight:600}
-#submit{margin-top:16px;padding:10px 28px;background:#7c3aed;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;transition:background .15s}
-#submit:hover{background:#6d28d9}
-#submit:disabled{background:#c4b5fd;cursor:default}
-#result{margin-top:14px;padding:14px;border-radius:8px;display:none}
-#result.ok{background:#f0fdf4;border:1.5px solid #86efac}
-#result.ng{background:#fef2f2;border:1.5px solid #fca5a5}
-#result .rh{font-weight:700;font-size:15px;margin-bottom:6px}
-#result .note{font-size:13px;line-height:1.65;color:#374151;white-space:pre-wrap}
-#next{margin-top:10px;padding:8px 22px;background:#4f46e5;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer}
-#next:hover{background:#4338ca}
-#empty{display:none;padding:40px;text-align:center;color:#9ca3af;font-size:15px}
+.opts{display:flex;flex-direction:column;gap:4px}
+.opt{display:flex;align-items:flex-start;gap:8px;padding:7px 11px;border-radius:6px;border:none;background:#f9fafb;cursor:pointer;transition:all .12s;line-height:1.5}
+.opt:hover{background:#f0eaff;color:#4f46e5}
+.opt.sel{background:#ede9fe;color:#4f46e5;font-weight:600}
+.opt.correct{background:#f0fdf4;color:#15803d;font-weight:600;border-left:3px solid #22c55e}
+.opt.wrong{background:#fef2f2;color:#dc2626;border-left:3px solid #ef4444}
+.opt-key{font-weight:700;font-size:13px;flex-shrink:0;width:18px}
+.opt-txt{flex:1;font-size:13px}
+.qcard-btns{margin-top:8px}
+.qcard-sub{padding:5px 16px;background:#7c3aed;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;transition:background .15s}
+.qcard-sub:hover{background:#6d28d9}
+.qcard-sub:disabled{background:#c4b5fd;cursor:default}
+.qcard-result{margin-top:8px;padding:9px 12px;border-radius:7px}
+.qcard-result.ok{background:#f0fdf4;border-left:3px solid #22c55e}
+.qcard-result.ng{background:#fef2f2;border-left:3px solid #ef4444}
+.qcard-result .rh{font-weight:700;font-size:13px;display:block;margin-bottom:3px}
+.qcard-result .note{font-size:12px;line-height:1.6;color:#374151;white-space:pre-wrap}
 
 /* ── knowledge panel ── */
 #pvOverlay{position:fixed;inset:0;background:rgba(15,15,30,.55);z-index:1000;display:none}
@@ -162,19 +184,8 @@ mark.kw{background:#fde68a;color:#78350f;border-radius:2px;padding:0 2px;font-st
 
   <div id="main">
     <div id="dotbox"></div>
-    <div id="card">
-      <div id="empty">该分类暂无题目</div>
-      <div id="qnum"></div>
-      <div id="qtext"></div>
-      <div id="multi-hint" style="display:none">（多选题，请选择所有正确答案）</div>
-      <div class="opts" id="opts"></div>
-      <button id="submit" onclick="doSubmit()">提 交</button>
-      <div id="result">
-        <div class="rh" id="rh"></div>
-        <div class="note" id="rnote"></div>
-        <button id="next" onclick="next()">下一题 →</button>
-      </div>
-    </div>
+    <div id="qinfo" class="page-nav"></div>
+    <div id="qlist"></div>
   </div>
 </div>
 
@@ -205,13 +216,14 @@ let prog = {};
 try { prog = JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch(e) {}
 
 // ── state ─────────────────────────────────────────────────────────
+const CHUNK = 20;
 let curCat  = ALLCATS[0] || '';
 let curSrc  = '全部';
 let curMode = 0;
 let queue   = [];
-let qi      = 0;
-let selOpts = new Set();
-let submitted = false;
+let wStart  = 0;
+let wEnd    = 0;
+let pageSelections = {};
 
 // ── source filter ─────────────────────────────────────────────────
 function buildSrcFilter() {
@@ -255,9 +267,9 @@ function buildQueue() {
   if (curMode === 0)      queue = [...pool];
   else if (curMode === 1) queue = [...pool].sort(() => Math.random()-.5);
   else                    queue = pool.filter(q => prog[q.id] && !prog[q.id].ok);
-  qi = 0;
+  pageSelections = {};
   buildDots();
-  showQ();
+  initWindow();
 }
 function setMode(m) {
   curMode = m;
@@ -267,107 +279,323 @@ function setMode(m) {
 
 // ── dots ─────────────────────────────────────────────────────────
 function buildDots() {
-  document.getElementById('dotbox').innerHTML = queue.map((q,i) => {
-    const p = prog[q.id];
-    return '<div class="dot' + (p?(p.ok?' ans-ok':' ans-ng'):'') + '" id="d' + i + '" title="第' + (i+1) + '题" onclick="jumpTo(' + i + ')"><\/div>';
+  document.getElementById('dotbox').innerHTML = queue.map(function(q, i) {
+    var p = prog[q.id];
+    return '<div class="dot' + (p?(p.ok?' ans-ok':' ans-ng'):'') + '" id="d' + i + '" title="第' + (i+1) + '题" onclick="jumpTo(' + i + ')">' + (i+1) + '<\/div>';
   }).join('');
-  highlightDot();
+  highlightWindowDots();
 }
-function highlightDot() {
-  document.querySelectorAll('.dot').forEach(d => d.classList.remove('cur'));
-  const d = document.getElementById('d'+qi);
-  if (d) { d.classList.add('cur'); d.scrollIntoView({block:'nearest'}); }
+function highlightWindowDots() {
+  var mid = document.getElementById('d' + Math.floor((wStart + wEnd) / 2));
+  if (mid) mid.scrollIntoView({block:'nearest'});
 }
-function jumpTo(i) { qi=i; selOpts.clear(); submitted=false; highlightDot(); showQ(); }
+function jumpTo(i) {
+  var dot = document.getElementById('d' + i);
+  if (dot) {
+    dot.classList.remove('clicked');
+    void dot.offsetWidth;
+    dot.classList.add('clicked');
+    dot.addEventListener('animationend', function() { dot.classList.remove('clicked'); }, {once:true});
+  }
+  if (i >= wStart && i < wEnd) {
+    var el = document.getElementById('qc' + i);
+    if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+  } else {
+    initWindow(i);
+    setTimeout(function() {
+      var el = document.getElementById('qc' + i);
+      if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+    }, 30);
+  }
+}
 
-// ── quiz display ──────────────────────────────────────────────────
-function showQ() {
-  const empty = document.getElementById('empty');
-  const sub   = document.getElementById('submit');
-  const res   = document.getElementById('result');
+// ── window init & infinite scroll ────────────────────────────────
+function initWindow(centerIdx) {
+  var listEl = document.getElementById('qlist');
+  listEl.innerHTML = '';
   if (!queue.length) {
-    empty.style.display='block'; sub.style.display='none'; res.style.display='none';
-    document.getElementById('qnum').innerHTML='';
-    document.getElementById('qtext').textContent='';
-    document.getElementById('opts').innerHTML='';
-    document.getElementById('multi-hint').style.display='none';
+    var empty = document.createElement('div');
+    empty.style.cssText = 'text-align:center;color:#9ca3af;font-size:15px;padding:40px';
+    empty.textContent = '该分类暂无题目';
+    listEl.appendChild(empty);
+    wStart = 0; wEnd = 0;
+    updateInfo(); updateHeader();
     return;
   }
-  empty.style.display='none'; sub.style.display='inline-block';
-  const q = queue[qi];
-  const p = prog[q.id];
-  submitted = !!p;
-  selOpts = new Set(p ? p.ans : []);
-  const correct = getCorrect(q);
-
-  document.getElementById('qnum').innerHTML =
-    '<span>第 ' + (qi+1) + ' \/ ' + queue.length + ' 题<\/span> ' +
-    '<span class="qtag ' + (TYPE_CLS[q.type]||'tag-single') + '">' + (TYPE_LABEL[q.type]||q.type) + '<\/span> ' +
-    '<span class="qtag ' + (q.src==='泰迪云课堂'?'tag-src-td':'tag-src-ai') + '">' + q.src + '<\/span> ' +
-    '<span style="color:#9ca3af;font-size:11px">' + q.cat + '<\/span>';
-  document.getElementById('qtext').textContent = q.text;
-  document.getElementById('multi-hint').style.display = q.type==='multi'?'block':'none';
-
-  const keys = Object.keys(q.opts);
-  document.getElementById('opts').innerHTML = keys.map(k => {
-    let cls = 'opt';
-    if (submitted) {
-      if (correct.includes(k)) cls+=' correct';
-      else if (selOpts.has(k)) cls+=' wrong';
-    } else if (selOpts.has(k)) cls+=' sel';
-    return '<div class="' + cls + '" id="o' + k + '" onclick="pick(\'' + k + '\')">' +
-      '<span class="opt-key">' + k + '<\/span>' +
-      '<span class="opt-txt">' + q.opts[k] + '<\/span><\/div>';
-  }).join('');
-
-  sub.disabled = submitted || selOpts.size===0;
-  if (submitted) showResult(q, p.ok); else res.style.display='none';
-  updateHeader();
+  var c = centerIdx != null ? centerIdx : 0;
+  wStart = Math.max(0, c - CHUNK);
+  wEnd   = Math.min(queue.length, c + CHUNK);
+  for (var i = wStart; i < wEnd; i++) listEl.appendChild(buildQCard(i));
+  // scroll so centerIdx is visible; default scroll to top
+  if (centerIdx != null) {
+    var el = document.getElementById('qc' + centerIdx);
+    if (el) el.scrollIntoView({block:'center'});
+  } else {
+    listEl.scrollTop = 0;
+  }
+  updateInfo(); updateHeader(); highlightWindowDots();
 }
 
-function pick(k) {
-  if (submitted) return;
-  const q = queue[qi];
-  if (q.type === 'multi') { selOpts.has(k)?selOpts.delete(k):selOpts.add(k); }
-  else { selOpts.clear(); selOpts.add(k); }
-  document.querySelectorAll('.opt').forEach(el => {
-    el.classList.toggle('sel', selOpts.has(el.id.replace('o','')));
+function appendChunk() {
+  if (wEnd >= queue.length) return;
+  var listEl = document.getElementById('qlist');
+  var newEnd = Math.min(wEnd + CHUNK, queue.length);
+  for (var i = wEnd; i < newEnd; i++) listEl.appendChild(buildQCard(i));
+  wEnd = newEnd;
+  // trim front if window > 3 chunks
+  if (wEnd - wStart > CHUNK * 3) {
+    var oldScrollTop = listEl.scrollTop;
+    var oldHeight = listEl.scrollHeight;
+    for (var j = 0; j < CHUNK && listEl.firstChild; j++) listEl.removeChild(listEl.firstChild);
+    wStart += CHUNK;
+    listEl.scrollTop = oldScrollTop - (oldHeight - listEl.scrollHeight);
+  }
+  updateInfo(); highlightWindowDots();
+}
+
+function prependChunk() {
+  if (wStart <= 0) return;
+  var listEl = document.getElementById('qlist');
+  var newStart = Math.max(0, wStart - CHUNK);
+  var oldScrollTop = listEl.scrollTop;
+  var oldHeight = listEl.scrollHeight;
+  var frag = document.createDocumentFragment();
+  for (var i = newStart; i < wStart; i++) frag.appendChild(buildQCard(i));
+  listEl.insertBefore(frag, listEl.firstChild);
+  wStart = newStart;
+  listEl.scrollTop = oldScrollTop + (listEl.scrollHeight - oldHeight);
+  // trim back if window > 3 chunks
+  if (wEnd - wStart > CHUNK * 3) {
+    for (var j = 0; j < CHUNK && listEl.lastChild; j++) listEl.removeChild(listEl.lastChild);
+    wEnd -= CHUNK;
+  }
+  updateInfo(); highlightWindowDots();
+}
+
+// ── info bar ──────────────────────────────────────────────────────
+function countUnsub() {
+  var n = 0;
+  for (var i = wStart; i < wEnd; i++) {
+    if (!prog[queue[i].id] && pageSelections[i] && pageSelections[i].size > 0) n++;
+  }
+  return n;
+}
+function updateInfo() {
+  var el = document.getElementById('qinfo');
+  if (!el || !queue.length) { if (el) el.innerHTML = ''; return; }
+  var unsub = countUnsub();
+  el.innerHTML = '<span class="pnav-info">共 ' + queue.length + ' 题<\/span>' +
+    '<button class="btn-sub-page"' + (unsub===0?' disabled':'') + ' onclick="submitVisible()">提交已选（' + unsub + ' 题）<\/button>';
+}
+
+function submitVisible() {
+  for (var i = wStart; i < wEnd; i++) {
+    if (!prog[queue[i].id] && pageSelections[i] && pageSelections[i].size > 0) submitOne(i);
+  }
+}
+
+// ── scroll infinite load ──────────────────────────────────────────
+(function() {
+  document.addEventListener('DOMContentLoaded', function() {
+    var listEl = document.getElementById('qlist');
+    if (!listEl) return;
+    var lastST = 0;
+    listEl.addEventListener('scroll', function() {
+      var st = listEl.scrollTop;
+      var threshold = 120;
+      if (st > lastST && st + listEl.clientHeight >= listEl.scrollHeight - threshold) appendChunk();
+      else if (st < lastST && st <= threshold) prependChunk();
+      lastST = st;
+    });
   });
-  document.getElementById('submit').disabled = selOpts.size===0;
+})();
+
+function buildQCard(i) {
+  var q = queue[i];
+  var p = prog[q.id];
+  var done = !!p;
+  var sel = pageSelections[i] || new Set();
+  var correct = getCorrect(q);
+
+  var card = document.createElement('div');
+  card.className = 'qcard' + (done ? (p.ok ? ' done-ok' : ' done-ng') : '');
+  card.id = 'qc' + i;
+
+  // Header
+  var hd = document.createElement('div');
+  hd.className = 'qcard-hd';
+  var numSp = document.createElement('span');
+  numSp.className = 'qcard-num';
+  numSp.textContent = '第 ' + (i+1) + ' 题';
+  var typeSp = document.createElement('span');
+  typeSp.className = 'qtag ' + (TYPE_CLS[q.type]||'tag-single');
+  typeSp.textContent = TYPE_LABEL[q.type] || q.type;
+  var srcSp = document.createElement('span');
+  srcSp.className = 'qtag ' + (q.src==='泰迪云课堂' ? 'tag-src-td' : 'tag-src-ai');
+  srcSp.textContent = q.src;
+  var statusSp = document.createElement('span');
+  statusSp.className = 'qcard-status ' + (done ? (p.ok ? 'qs-ok' : 'qs-ng') : (sel.size > 0 ? 'qs-sel' : 'qs-pending'));
+  statusSp.id = 'qs' + i;
+  statusSp.textContent = done ? (p.ok ? '✅ 正确' : '❌ 错误') : (sel.size > 0 ? '已选择' : '未作答');
+  hd.append(numSp, typeSp, srcSp, statusSp);
+  card.appendChild(hd);
+
+  // Multi hint
+  if (q.type === 'multi') {
+    var hint = document.createElement('div');
+    hint.className = 'multi-hint';
+    hint.textContent = '（多选题，请选择所有正确答案）';
+    card.appendChild(hint);
+  }
+
+  // Question text
+  var txt = document.createElement('div');
+  txt.className = 'qcard-text';
+  txt.textContent = q.text;
+  card.appendChild(txt);
+
+  // Options
+  var optsEl = document.createElement('div');
+  optsEl.className = 'opts';
+  optsEl.id = 'opts' + i;
+  var keys = Object.keys(q.opts);
+  keys.forEach(function(k) {
+    var optEl = document.createElement('div');
+    var cls = 'opt';
+    if (done) {
+      if (correct.indexOf(k) >= 0) cls += ' correct';
+      else if (p.ans.indexOf(k) >= 0) cls += ' wrong';
+    } else if (sel.has(k)) {
+      cls += ' sel';
+    }
+    optEl.className = cls;
+    optEl.id = 'o' + i + '_' + k;
+    if (!done) {
+      (function(key) {
+        optEl.onclick = function() { pickOpt(i, key); };
+      })(k);
+    }
+    var keySp = document.createElement('span');
+    keySp.className = 'opt-key';
+    keySp.textContent = k;
+    var valSp = document.createElement('span');
+    valSp.className = 'opt-txt';
+    valSp.textContent = q.opts[k];
+    optEl.append(keySp, valSp);
+    optsEl.appendChild(optEl);
+  });
+  card.appendChild(optsEl);
+
+  // Submit button (only if not yet done)
+  if (!done) {
+    var btns = document.createElement('div');
+    btns.className = 'qcard-btns';
+    var subBtn = document.createElement('button');
+    subBtn.className = 'qcard-sub';
+    subBtn.id = 'sb' + i;
+    subBtn.textContent = '立即提交';
+    subBtn.disabled = sel.size === 0;
+    (function(idx) { subBtn.onclick = function() { submitOne(idx); }; })(i);
+    btns.appendChild(subBtn);
+    card.appendChild(btns);
+  }
+
+  // Result (if already submitted)
+  if (done) {
+    card.appendChild(buildResultEl(q, p.ok));
+  }
+
+  return card;
 }
 
-function doSubmit() {
-  if (!queue.length || submitted) return;
-  const q = queue[qi];
-  const correct = getCorrect(q);
-  const ok = correct.sort().join('') === [...selOpts].sort().join('');
-  prog[q.id] = { ans:[...selOpts], ok };
+function buildResultEl(q, ok) {
+  var res = document.createElement('div');
+  res.className = 'qcard-result ' + (ok ? 'ok' : 'ng');
+  var rh = document.createElement('span');
+  rh.className = 'rh';
+  var correct = getCorrect(q);
+  rh.textContent = ok ? '✅ 回答正确！' : '❌ 回答错误，正确答案：' + correct.join('、');
+  res.appendChild(rh);
+  if (q.note) {
+    var note = document.createElement('div');
+    note.className = 'note';
+    note.textContent = '解析：' + q.note;
+    res.appendChild(note);
+  }
+  return res;
+}
+
+// ── interaction ───────────────────────────────────────────────────
+function pickOpt(i, key) {
+  var q = queue[i];
+  if (!pageSelections[i]) pageSelections[i] = new Set();
+  var sel = pageSelections[i];
+  if (q.type === 'multi') {
+    if (sel.has(key)) sel.delete(key); else sel.add(key);
+  } else {
+    sel.clear(); sel.add(key);
+  }
+  Object.keys(q.opts).forEach(function(k) {
+    var el = document.getElementById('o' + i + '_' + k);
+    if (el) el.className = 'opt' + (sel.has(k) ? ' sel' : '');
+  });
+  var sb = document.getElementById('sb' + i);
+  if (sb) sb.disabled = sel.size === 0;
+  var qs = document.getElementById('qs' + i);
+  if (qs) {
+    qs.className = 'qcard-status ' + (sel.size > 0 ? 'qs-sel' : 'qs-pending');
+    qs.textContent = sel.size > 0 ? '已选择' : '未作答';
+  }
+  var dot = document.getElementById('d' + i);
+  if (dot) {
+    dot.classList.remove('ans-sel');
+    if (sel.size > 0) dot.classList.add('ans-sel');
+  }
+  updateInfo();
+}
+
+function submitOne(i) {
+  var q = queue[i];
+  var sel = pageSelections[i];
+  if (!sel || sel.size === 0) return;
+  var correct = getCorrect(q);
+  var selArr = [...sel].sort();
+  var ok = correct.slice().sort().join('') === selArr.join('');
+  prog[q.id] = { ans: selArr, ok: ok };
   try { localStorage.setItem(LS_KEY, JSON.stringify(prog)); } catch(e) {}
-  submitted = true;
-  document.getElementById('submit').disabled = true;
-  Object.keys(q.opts).forEach(k => {
-    const el = document.getElementById('o'+k);
-    if (!el) return;
-    el.classList.remove('sel');
-    if (correct.includes(k)) el.classList.add('correct');
-    else if (selOpts.has(k)) el.classList.add('wrong');
-  });
-  showResult(q, ok);
-  const d = document.getElementById('d'+qi);
-  if (d) { d.classList.remove('ans-ok','ans-ng'); d.classList.add(ok?'ans-ok':'ans-ng'); }
-  updateHeader(); buildCatList();
+
+  var card = document.getElementById('qc' + i);
+  if (card) {
+    card.className = 'qcard ' + (ok ? 'done-ok' : 'done-ng');
+    var btns = card.querySelector('.qcard-btns');
+    if (btns) btns.remove();
+    Object.keys(q.opts).forEach(function(k) {
+      var el = document.getElementById('o' + i + '_' + k);
+      if (!el) return;
+      el.onclick = null;
+      el.className = 'opt';
+      if (correct.indexOf(k) >= 0) el.classList.add('correct');
+      else if (sel.has(k)) el.classList.add('wrong');
+    });
+    card.appendChild(buildResultEl(q, ok));
+  }
+
+  var qs = document.getElementById('qs' + i);
+  if (qs) {
+    qs.className = 'qcard-status ' + (ok ? 'qs-ok' : 'qs-ng');
+    qs.textContent = ok ? '✅ 正确' : '❌ 错误';
+  }
+  var dot = document.getElementById('d' + i);
+  if (dot) { dot.classList.remove('ans-sel','ans-ok','ans-ng'); dot.classList.add(ok ? 'ans-ok' : 'ans-ng'); }
+  updateInfo();
+  updateHeader();
+  buildCatList();
 }
 
-function showResult(q, ok) {
-  const res = document.getElementById('result');
-  res.style.display='block'; res.className = ok?'ok':'ng';
-  const correct = getCorrect(q);
-  document.getElementById('rh').textContent = ok ? '✅ 回答正确！' : '❌ 回答错误，正确答案：' + correct.join('、');
-  document.getElementById('rnote').textContent = q.note ? '解析：' + q.note : '（暂无解析）';
-}
-
-function next() {
-  if (qi < queue.length-1) { qi++; selOpts.clear(); submitted=false; highlightDot(); showQ(); }
+function submitVisible() {
+  for (var i = wStart; i < wEnd; i++) {
+    if (!prog[queue[i].id] && pageSelections[i] && pageSelections[i].size > 0) submitOne(i);
+  }
 }
 
 // ── header stats ──────────────────────────────────────────────────
@@ -385,8 +613,9 @@ function updateHeader() {
 function resetAll() {
   if (!confirm('确定重置所有进度？')) return;
   prog = {};
+  pageSelections = {};
   try { localStorage.removeItem(LS_KEY); } catch(e) {}
-  buildCatList(); buildQueue(); updateHeader();
+  buildDots(); buildCatList(); initWindow(); updateHeader();
 }
 
 // ═══════════════════════════════════════════════════════════════════
